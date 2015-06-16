@@ -47,10 +47,7 @@ func (i inline) parse(src string, md *Markdown, env *environment) []Token {
 	s.src = src
 	s.md = md
 	s.env = env
-	s.pos = 0
 	s.posMax = len(src)
-	s.level = 0
-	s.pendingLevel = 0
 
 	i.tokenize(&s)
 
