@@ -52,9 +52,7 @@ outer:
 		Content: content,
 		Map:     [2]int{startLine, s.line},
 	})
-	s.pushClosingToken(&ParagraphClose{
-		Map: [2]int{startLine, s.line},
-	})
+	s.pushClosingToken(&ParagraphClose{})
 
 	return true
 }

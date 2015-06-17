@@ -169,7 +169,6 @@ type ParagraphOpen struct {
 
 type ParagraphClose struct {
 	Tight bool
-	Map   [2]int
 	Lvl   int
 }
 
