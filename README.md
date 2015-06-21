@@ -1,4 +1,4 @@
-markdown [![GoDoc](http://godoc.org/github.com/opennota/markdown?status.svg)](http://godoc.org/github.com/opennota/markdown)
+markdown [![GoDoc](http://godoc.org/github.com/opennota/markdown?status.svg)](http://godoc.org/github.com/opennota/markdown) [![License](http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 ========
 
 opennota/markdown package provides CommonMark-compliant markdown parser and renderer, written in Go.
@@ -60,7 +60,3 @@ Rendering spec/spec-0.20.txt on a Intel(R) Core(TM) i5-2400 CPU @ 3.10GHz
 
   * Improve performance with the raw HTML option enabled
   * Write an URL parser/encoder that would support decoding punycode and counting matching `[(` and `)]` in URLs
-
-## License
-
-GNU GPL v3+
