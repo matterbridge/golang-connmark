@@ -44,10 +44,10 @@ func BenchmarkRenderSpecBlackFriday(b *testing.B) {
 		panic(err)
 	}
 
+	renderer := blackfriday.HtmlRenderer(blackfriday.HTML_USE_XHTML|blackfriday.HTML_USE_SMARTYPANTS|blackfriday.HTML_SMARTYPANTS_LATEX_DASHES, "", "")
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		renderer := blackfriday.HtmlRenderer(blackfriday.HTML_USE_XHTML|blackfriday.HTML_USE_SMARTYPANTS|blackfriday.HTML_SMARTYPANTS_LATEX_DASHES, "", "")
 		blackfriday.Markdown(data, renderer,
 			blackfriday.EXTENSION_NO_INTRA_EMPHASIS|
 				blackfriday.EXTENSION_TABLES|
