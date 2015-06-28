@@ -48,6 +48,7 @@ func (i inline) parse(src string, md *Markdown, env *environment) []Token {
 	s.md = md
 	s.env = env
 	s.posMax = len(src)
+	s.tokens = s.tokArr[:0]
 
 	i.tokenize(&s)
 

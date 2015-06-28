@@ -15,6 +15,7 @@ package markdown
 
 type stateCore struct {
 	src    string
+	tokArr [3]Token
 	tokens []Token
 	md     *Markdown
 	env    *environment

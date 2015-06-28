@@ -117,6 +117,7 @@ func ruleImage(s *stateInline, silent bool) (_ bool) {
 		newState.md = s.md
 		newState.env = s.env
 		newState.posMax = len(src)
+		newState.tokens = newState.tokArr[:0]
 		newState.md.inline.tokenize(&newState)
 
 		s.pushToken(&Image{
