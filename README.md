@@ -60,3 +60,14 @@ Rendering spec/spec-0.20.txt on a Intel(R) Core(TM) i5-2400 CPU @ 3.10GHz
 
   * Improve performance with the raw HTML option enabled
   * Write an URL parser/encoder that would support decoding punycode and counting matching `[(` and `)]` in URLs
+
+## References / Thanks
+
+[opennota/markdown](https://github.com/opennota/markdown) is a partial port of an awesome JavaScript markdown parser [markdown-it](https://github.com/markdown-it/markdown-it), written by Alex Kocharin and Vitaly Puzrin. It doesn't support plugins and all the rules are hardcoded for the sake of speed.
+
+## See also
+
+https://github.com/jgm/CommonMark — the reference CommonMark implementations in C and JavaScript,
+  also contains the latest spec and an online demo.
+
+http://talk.commonmark.org — the CommonMark forum, a good place to join together the efforts of the developers.
