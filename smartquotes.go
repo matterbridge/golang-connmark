@@ -42,7 +42,6 @@ func replaceQuotes(tokens []Token, s *stateCore) {
 
 	for i, tok := range tokens {
 		thisLevel := tok.Level()
-		_ = thisLevel
 
 		j := len(stack) - 1
 		for j >= 0 {
