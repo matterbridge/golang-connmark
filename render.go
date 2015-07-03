@@ -94,7 +94,7 @@ func (r *Renderer) renderToken(tokens []Token, idx int, options RenderOptions) {
 	case *Fence:
 		r.w.WriteString("<pre><code")
 		if tok.Params != "" {
-			langName := unescapeAll(strings.SplitN(tok.Params, " ", 2)[0])
+			langName := strings.SplitN(unescapeAll(tok.Params), " ", 2)[0]
 			r.w.WriteString(` class="`)
 			r.w.WriteString(options.LangPrefix)
 			html.WriteEscapedString(r.w, langName)
