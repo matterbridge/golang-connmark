@@ -148,5 +148,5 @@ func init() {
 	RegisterInlineRule(800, ruleImage)
 	RegisterInlineRule(900, ruleAutolink)
 	RegisterInlineRule(1000, ruleHTMLInline)
-	RegisterInlineRule(1000, ruleEntity)
+	RegisterInlineRule(1100, ruleEntity)
 }
