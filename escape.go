@@ -21,31 +21,31 @@ func init() {
 	}
 }
 
-func ruleEscape(s *stateInline, silent bool) (_ bool) {
-	pos := s.pos
-	src := s.src
+func ruleEscape(s *StateInline, silent bool) (_ bool) {
+	pos := s.Pos
+	src := s.Src
 
 	if src[pos] != '\\' {
 		return
 	}
 
 	pos++
-	max := s.posMax
+	max := s.PosMax
 
 	if pos < max {
 		b := src[pos]
 
 		if b < 0x7f && escaped[b] {
 			if !silent {
-				s.pending.WriteByte(b)
+				s.Pending.WriteByte(b)
 			}
-			s.pos += 2
+			s.Pos += 2
 			return true
 		}
 
 		if b == '\n' {
 			if !silent {
-				s.pushToken(&Hardbreak{})
+				s.PushToken(&Hardbreak{})
 			}
 
 			pos++
@@ -54,16 +54,16 @@ func ruleEscape(s *stateInline, silent bool) (_ bool) {
 				pos++
 			}
 
-			s.pos = pos
+			s.Pos = pos
 			return true
 		}
 	}
 
 	if !silent {
-		s.pending.WriteByte('\\')
+		s.Pending.WriteByte('\\')
 	}
 
-	s.pos++
+	s.Pos++
 
 	return true
 }

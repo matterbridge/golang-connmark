@@ -13,18 +13,18 @@
 
 package markdown
 
-func parseLinkLabel(s *stateInline, start int, disableNested bool) int {
-	src := s.src
+func parseLinkLabel(s *StateInline, start int, disableNested bool) int {
+	src := s.Src
 	labelEnd := -1
-	max := s.posMax
-	oldPos := s.pos
+	max := s.PosMax
+	oldPos := s.Pos
 
-	s.pos = start + 1
+	s.Pos = start + 1
 	level := 1
 	found := false
 
-	for s.pos < max {
-		marker := src[s.pos]
+	for s.Pos < max {
+		marker := src[s.Pos]
 
 		if marker == ']' {
 			level--
@@ -34,25 +34,25 @@ func parseLinkLabel(s *stateInline, start int, disableNested bool) int {
 			}
 		}
 
-		prevPos := s.pos
+		prevPos := s.Pos
 
-		s.md.inline.skipToken(s)
+		s.Md.Inline.SkipToken(s)
 
 		if marker == '[' {
-			if prevPos == s.pos-1 {
+			if prevPos == s.Pos-1 {
 				level++
 			} else if disableNested {
-				s.pos = oldPos
+				s.Pos = oldPos
 				return -1
 			}
 		}
 	}
 
 	if found {
-		labelEnd = s.pos
+		labelEnd = s.Pos
 	}
 
-	s.pos = oldPos
+	s.Pos = oldPos
 
 	return labelEnd
 }

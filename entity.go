@@ -15,30 +15,30 @@ package markdown
 
 import "github.com/opennota/html"
 
-func ruleEntity(s *stateInline, silent bool) (_ bool) {
-	pos := s.pos
-	src := s.src
+func ruleEntity(s *StateInline, silent bool) (_ bool) {
+	pos := s.Pos
+	src := s.Src
 
 	if src[pos] != '&' {
 		return
 	}
 
-	max := s.posMax
+	max := s.PosMax
 
 	if pos+1 < max {
 		if e, n := html.ParseEntity(src[pos:]); n > 0 {
 			if !silent {
-				s.pending.WriteString(e)
+				s.Pending.WriteString(e)
 			}
-			s.pos += n
+			s.Pos += n
 			return true
 		}
 	}
 
 	if !silent {
-		s.pending.WriteByte('&')
+		s.Pending.WriteByte('&')
 	}
-	s.pos++
+	s.Pos++
 
 	return true
 }

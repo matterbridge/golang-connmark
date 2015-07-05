@@ -29,16 +29,18 @@ func init() {
 	afterdigit[')'], afterdigit['.'] = true, true
 }
 
-func skipBulletListMarker(s *stateBlock, startLine int) int {
-	pos := s.bMarks[startLine] + s.tShift[startLine]
-	src := s.src
+var listTerminatedBy []BlockRule
+
+func skipBulletListMarker(s *StateBlock, startLine int) int {
+	pos := s.BMarks[startLine] + s.TShift[startLine]
+	src := s.Src
 
 	if !bullet[src[pos]] {
 		return -1
 	}
 
 	pos++
-	max := s.eMarks[startLine]
+	max := s.EMarks[startLine]
 
 	if pos < max && src[pos] != ' ' {
 		return -1
@@ -47,15 +49,15 @@ func skipBulletListMarker(s *stateBlock, startLine int) int {
 	return pos
 }
 
-func skipOrderedListMarker(s *stateBlock, startLine int) int {
-	pos := s.bMarks[startLine] + s.tShift[startLine]
-	max := s.eMarks[startLine]
+func skipOrderedListMarker(s *StateBlock, startLine int) int {
+	pos := s.BMarks[startLine] + s.TShift[startLine]
+	max := s.EMarks[startLine]
 
 	if pos+1 >= max {
 		return -1
 	}
 
-	src := s.src
+	src := s.Src
 	b := src[pos]
 
 	if !byteutil.IsDigit(b) {
@@ -88,9 +90,9 @@ func skipOrderedListMarker(s *stateBlock, startLine int) int {
 	return pos
 }
 
-func markParagraphsTight(s *stateBlock, idx int) {
-	level := s.level + 2
-	tokens := s.tokens
+func markParagraphsTight(s *StateBlock, idx int) {
+	level := s.Level + 2
+	tokens := s.Tokens
 
 	for i := idx + 2; i < len(tokens)-2; i++ {
 		if tokens[i].Level() == level {
@@ -103,8 +105,8 @@ func markParagraphsTight(s *stateBlock, idx int) {
 	}
 }
 
-func ruleList(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
-	shift := s.tShift[startLine]
+func ruleList(s *StateBlock, startLine, endLine int, silent bool) (_ bool) {
+	shift := s.TShift[startLine]
 	if shift < 0 {
 		return
 	}
@@ -120,31 +122,31 @@ func ruleList(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
 		}
 	}
 
-	src := s.src
+	src := s.Src
 	markerChar := src[posAfterMarker-1]
 
 	if silent {
 		return true
 	}
 
-	tokenIdx := len(s.tokens)
+	tokenIdx := len(s.Tokens)
 
 	var listMap *[2]int
 	if isOrdered {
-		start := s.bMarks[startLine] + shift
+		start := s.BMarks[startLine] + shift
 		markerValue, _ := strconv.Atoi(src[start : posAfterMarker-1])
 
 		tok := &OrderedListOpen{
 			Order: markerValue,
 			Map:   [2]int{startLine, 0},
 		}
-		s.pushOpeningToken(tok)
+		s.PushOpeningToken(tok)
 		listMap = &tok.Map
 	} else {
 		tok := &BulletListOpen{
 			Map: [2]int{startLine, 0},
 		}
-		s.pushOpeningToken(tok)
+		s.PushOpeningToken(tok)
 		listMap = &tok.Map
 	}
 
@@ -154,8 +156,8 @@ func ruleList(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
 	tight := true
 outer:
 	for nextLine < endLine {
-		contentStart := s.skipSpaces(posAfterMarker)
-		max := s.eMarks[nextLine]
+		contentStart := s.SkipSpaces(posAfterMarker)
+		max := s.EMarks[nextLine]
 
 		var indentAfterMarker int
 		if contentStart >= max {
@@ -168,65 +170,61 @@ outer:
 			indentAfterMarker = 1
 		}
 
-		indent := posAfterMarker - s.bMarks[nextLine] + indentAfterMarker
+		indent := posAfterMarker - s.BMarks[nextLine] + indentAfterMarker
 
 		tok := &ListItemOpen{
 			Map: [2]int{startLine, 0},
 		}
-		s.pushOpeningToken(tok)
+		s.PushOpeningToken(tok)
 		itemMap := &tok.Map
 
-		oldIndent := s.blkIndent
-		oldTight := s.tight
-		oldTShift := s.tShift[startLine]
-		oldParentType := s.parentType
-		s.tShift[startLine] = contentStart - s.bMarks[startLine]
-		s.blkIndent = indent
-		s.tight = true
-		s.parentType = ptList
+		oldIndent := s.BlkIndent
+		oldTight := s.Tight
+		oldTShift := s.TShift[startLine]
+		oldParentType := s.ParentType
+		s.TShift[startLine] = contentStart - s.BMarks[startLine]
+		s.BlkIndent = indent
+		s.Tight = true
+		s.ParentType = ptList
 
-		s.md.block.tokenize(s, startLine, endLine)
+		s.Md.Block.Tokenize(s, startLine, endLine)
 
-		if !s.tight || prevEmptyEnd {
+		if !s.Tight || prevEmptyEnd {
 			tight = false
 		}
-		prevEmptyEnd = s.line-startLine > 1 && s.isLineEmpty(s.line-1)
+		prevEmptyEnd = s.Line-startLine > 1 && s.IsLineEmpty(s.Line-1)
 		if prevEmptyEnd {
-			lastToken := s.tokens[len(s.tokens)-1]
+			lastToken := s.Tokens[len(s.Tokens)-1]
 			if _, ok := lastToken.(*BlockquoteClose); ok {
 				prevEmptyEnd = false
 			}
 		}
 
-		s.blkIndent = oldIndent
-		s.tShift[startLine] = oldTShift
-		s.tight = oldTight
-		s.parentType = oldParentType
+		s.BlkIndent = oldIndent
+		s.TShift[startLine] = oldTShift
+		s.Tight = oldTight
+		s.ParentType = oldParentType
 
-		s.pushClosingToken(&ListItemClose{})
+		s.PushClosingToken(&ListItemClose{})
 
-		startLine = s.line
+		startLine = s.Line
 		nextLine = startLine
 		(*itemMap)[1] = nextLine
-		contentStart = s.bMarks[startLine]
+		contentStart = s.BMarks[startLine]
 
 		if nextLine >= endLine {
 			break
 		}
 
-		if s.isLineEmpty(nextLine) {
+		if s.IsLineEmpty(nextLine) {
 			break
 		}
 
-		if s.tShift[nextLine] < s.blkIndent {
+		if s.TShift[nextLine] < s.BlkIndent {
 			break
 		}
 
-		for _, r := range []blockRule{
-			ruleFence,
-			ruleBlockQuote,
-			ruleHR,
-		} {
+		for _, r := range listTerminatedBy {
 			if r(s, nextLine, endLine, true) {
 				break outer
 			}
@@ -250,13 +248,13 @@ outer:
 	}
 
 	if isOrdered {
-		s.pushClosingToken(&OrderedListClose{})
+		s.PushClosingToken(&OrderedListClose{})
 	} else {
-		s.pushClosingToken(&BulletListClose{})
+		s.PushClosingToken(&BulletListClose{})
 	}
 	(*listMap)[1] = nextLine
 
-	s.line = nextLine
+	s.Line = nextLine
 
 	if tight {
 		markParagraphsTight(s, tokenIdx)

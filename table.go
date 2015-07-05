@@ -23,13 +23,13 @@ func init() {
 	}
 }
 
-func getLine(s *stateBlock, line int) string {
-	pos := s.bMarks[line] + s.blkIndent
-	max := s.eMarks[line]
+func getLine(s *StateBlock, line int) string {
+	pos := s.BMarks[line] + s.BlkIndent
+	max := s.EMarks[line]
 	if pos >= max {
 		return ""
 	}
-	return s.src[pos:max]
+	return s.Src[pos:max]
 }
 
 func escapedSplit(s string) (result []string) {
@@ -75,8 +75,8 @@ func escapedSplit(s string) (result []string) {
 	return
 }
 
-func ruleTable(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
-	if !s.md.Tables {
+func ruleTable(s *StateBlock, startLine, endLine int, silent bool) (_ bool) {
+	if !s.Md.Tables {
 		return
 	}
 
@@ -86,16 +86,16 @@ func ruleTable(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
 
 	nextLine := startLine + 1
 
-	if s.tShift[nextLine] < s.blkIndent {
+	if s.TShift[nextLine] < s.BlkIndent {
 		return
 	}
 
-	pos := s.bMarks[nextLine] + s.tShift[nextLine]
-	if pos >= s.eMarks[nextLine] {
+	pos := s.BMarks[nextLine] + s.TShift[nextLine]
+	if pos >= s.EMarks[nextLine] {
 		return
 	}
 
-	src := s.src
+	src := s.Src
 	if !hdr[src[pos]] {
 		return
 	}
@@ -146,37 +146,37 @@ func ruleTable(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
 	tableTok := &TableOpen{
 		Map: [2]int{startLine, 0},
 	}
-	s.pushOpeningToken(tableTok)
-	s.pushOpeningToken(&TheadOpen{
+	s.PushOpeningToken(tableTok)
+	s.PushOpeningToken(&TheadOpen{
 		Map: [2]int{startLine, startLine + 1},
 	})
-	s.pushOpeningToken(&TrOpen{
+	s.PushOpeningToken(&TrOpen{
 		Map: [2]int{startLine, startLine + 1},
 	})
 
 	for i := 0; i < len(rows); i++ {
-		s.pushOpeningToken(&ThOpen{
+		s.PushOpeningToken(&ThOpen{
 			Align: aligns[i],
 			Map:   [2]int{startLine, startLine + 1},
 		})
-		s.pushToken(&Inline{
+		s.PushToken(&Inline{
 			Content: strings.TrimSpace(rows[i]),
 			Map:     [2]int{startLine, startLine + 1},
 		})
-		s.pushClosingToken(&ThClose{})
+		s.PushClosingToken(&ThClose{})
 	}
 
-	s.pushClosingToken(&TrClose{})
-	s.pushClosingToken(&TheadClose{})
+	s.PushClosingToken(&TrClose{})
+	s.PushClosingToken(&TheadClose{})
 
 	tbodyTok := &TbodyOpen{
 		Map: [2]int{startLine + 2, 0},
 	}
-	s.pushOpeningToken(tbodyTok)
+	s.PushOpeningToken(tbodyTok)
 
 	for nextLine = startLine + 2; nextLine < endLine; nextLine++ {
-		shift := s.tShift[nextLine]
-		if shift >= 0 && shift < s.blkIndent {
+		shift := s.TShift[nextLine]
+		if shift >= 0 && shift < s.BlkIndent {
 			break
 		}
 
@@ -191,23 +191,23 @@ func ruleTable(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
 			rows = rows[:len(aligns)]
 		}
 
-		s.pushOpeningToken(&TrOpen{})
+		s.PushOpeningToken(&TrOpen{})
 		for i := 0; i < len(rows); i++ {
-			s.pushOpeningToken(&TdOpen{Align: aligns[i]})
-			s.pushToken(&Inline{
+			s.PushOpeningToken(&TdOpen{Align: aligns[i]})
+			s.PushToken(&Inline{
 				Content: strings.TrimSpace(rows[i]),
 			})
-			s.pushClosingToken(&TdClose{})
+			s.PushClosingToken(&TdClose{})
 		}
-		s.pushClosingToken(&TrClose{})
+		s.PushClosingToken(&TrClose{})
 	}
 
-	s.pushClosingToken(&TbodyClose{})
-	s.pushClosingToken(&TableClose{})
+	s.PushClosingToken(&TbodyClose{})
+	s.PushClosingToken(&TableClose{})
 
 	tableTok.Map[1] = nextLine
 	tbodyTok.Map[1] = nextLine
-	s.line = nextLine
+	s.Line = nextLine
 
 	return true
 }

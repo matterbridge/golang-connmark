@@ -168,12 +168,12 @@ func performReplacements(s string) string {
 	return buf.String()
 }
 
-func ruleReplacements(s *stateCore) {
-	if !s.md.Typographer {
+func ruleReplacements(s *StateCore) {
+	if !s.Md.Typographer {
 		return
 	}
 
-	for _, tok := range s.tokens {
+	for _, tok := range s.Tokens {
 		if tok, ok := tok.(*Inline); ok {
 			for _, itok := range tok.Children {
 				switch itok := itok.(type) {

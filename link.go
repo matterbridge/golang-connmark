@@ -13,9 +13,9 @@
 
 package markdown
 
-func ruleLink(s *stateInline, silent bool) (_ bool) {
-	pos := s.pos
-	src := s.src
+func ruleLink(s *StateInline, silent bool) (_ bool) {
+	pos := s.Pos
+	src := s.Src
 
 	if src[pos] != '[' {
 		return
@@ -30,14 +30,14 @@ func ruleLink(s *stateInline, silent bool) (_ bool) {
 	var href, title, label string
 	oldPos := pos
 	pos = labelEnd + 1
-	max := s.posMax
+	max := s.PosMax
 	if pos < max && src[pos] == '(' {
 		pos = skipws(src, pos+1, max)
 		if pos >= max {
 			return
 		}
 
-		url, endpos, ok := parseLinkDestination(src, pos, s.posMax)
+		url, endpos, ok := parseLinkDestination(src, pos, s.PosMax)
 		if ok {
 			url = normalizeLink(url)
 			if validateLink(url) {
@@ -52,20 +52,20 @@ func ruleLink(s *stateInline, silent bool) (_ bool) {
 			return
 		}
 
-		title, _, endpos, ok = parseLinkTitle(src, pos, s.posMax)
+		title, _, endpos, ok = parseLinkTitle(src, pos, s.PosMax)
 		if pos < max && start != pos && ok {
 			pos = skipws(src, endpos, max)
 		}
 
 		if pos >= max || src[pos] != ')' {
-			s.pos = oldPos
+			s.Pos = oldPos
 			return
 		}
 
 		pos++
 
 	} else {
-		if s.env.References == nil {
+		if s.Env.References == nil {
 			return
 		}
 
@@ -88,9 +88,9 @@ func ruleLink(s *stateInline, silent bool) (_ bool) {
 			label = src[labelStart:labelEnd]
 		}
 
-		ref, ok := s.env.References[normalizeReference(label)]
+		ref, ok := s.Env.References[normalizeReference(label)]
 		if !ok {
-			s.pos = oldPos
+			s.Pos = oldPos
 			return
 		}
 
@@ -99,21 +99,21 @@ func ruleLink(s *stateInline, silent bool) (_ bool) {
 	}
 
 	if !silent {
-		s.pos = labelStart
-		s.posMax = labelEnd
+		s.Pos = labelStart
+		s.PosMax = labelEnd
 
-		s.pushOpeningToken(&LinkOpen{
+		s.PushOpeningToken(&LinkOpen{
 			Href:  href,
 			Title: title,
 		})
 
-		s.md.inline.tokenize(s)
+		s.Md.Inline.Tokenize(s)
 
-		s.pushClosingToken(&LinkClose{})
+		s.PushClosingToken(&LinkClose{})
 	}
 
-	s.pos = pos
-	s.posMax = max
+	s.Pos = pos
+	s.PosMax = max
 
 	return true
 }

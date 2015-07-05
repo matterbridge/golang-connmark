@@ -15,57 +15,41 @@ package markdown
 
 import "unicode/utf8"
 
-type inline struct {
+type ParserInline struct {
 }
 
-type inlineRule func(*stateInline, bool) bool
+type InlineRule func(*StateInline, bool) bool
 
-var inlineRules []inlineRule
+var inlineRules []InlineRule
 
-func init() {
-	inlineRules = []inlineRule{
-		ruleText,
-		ruleNewline,
-		ruleEscape,
-		ruleBackticks,
-		ruleStrikeThrough,
-		ruleEmphasis,
-		ruleLink,
-		ruleImage,
-		ruleAutolink,
-		ruleHTMLInline,
-		ruleEntity,
-	}
-}
-
-func (i inline) parse(src string, md *Markdown, env *environment) []Token {
+func (i ParserInline) Parse(src string, md *Markdown, env *Environment) []Token {
 	if src == "" {
 		return nil
 	}
 
-	var s stateInline
-	s.src = src
-	s.md = md
-	s.env = env
-	s.posMax = len(src)
-	s.tokens = s.tokArr[:0]
+	var s StateInline
+	s.Src = src
+	s.Md = md
+	s.Env = env
+	s.PosMax = len(src)
+	s.Tokens = s.TokArr[:0]
 
-	i.tokenize(&s)
+	i.Tokenize(&s)
 
-	return s.tokens
+	return s.Tokens
 }
 
-func (inline) tokenize(s *stateInline) {
-	max := s.posMax
-	src := s.src
-	maxNesting := s.md.MaxNesting
+func (ParserInline) Tokenize(s *StateInline) {
+	max := s.PosMax
+	src := s.Src
+	maxNesting := s.Md.MaxNesting
 
 outer:
-	for s.pos < max {
-		if s.level < maxNesting {
+	for s.Pos < max {
+		if s.Level < maxNesting {
 			for _, rule := range inlineRules {
 				if rule(s, false) {
-					if s.pos >= max {
+					if s.Pos >= max {
 						break outer
 					}
 					continue outer
@@ -73,36 +57,36 @@ outer:
 			}
 		}
 
-		r, size := utf8.DecodeRuneInString(src[s.pos:])
-		s.pending.WriteRune(r)
-		s.pos += size
+		r, size := utf8.DecodeRuneInString(src[s.Pos:])
+		s.Pending.WriteRune(r)
+		s.Pos += size
 	}
 
-	if s.pending.Len() > 0 {
-		s.pushPending()
+	if s.Pending.Len() > 0 {
+		s.PushPending()
 	}
 }
 
-func (inline) skipToken(s *stateInline) {
-	pos := s.pos
-	if s.cache != nil {
-		if pos, ok := s.cache[pos]; ok {
-			s.pos = pos
+func (ParserInline) SkipToken(s *StateInline) {
+	pos := s.Pos
+	if s.Cache != nil {
+		if pos, ok := s.Cache[pos]; ok {
+			s.Pos = pos
 			return
 		}
 	} else {
-		s.cache = make(map[int]int)
+		s.Cache = make(map[int]int)
 	}
 
-	if s.level < s.md.MaxNesting {
+	if s.Level < s.Md.MaxNesting {
 		for _, r := range inlineRules {
 			if r(s, true) {
-				s.cache[pos] = s.pos
+				s.Cache[pos] = s.Pos
 				return
 			}
 		}
 	}
 
-	s.pos++
-	s.cache[pos] = s.pos
+	s.Pos++
+	s.Cache[pos] = s.Pos
 }

@@ -36,7 +36,7 @@ func nextQuoteIndex(s []rune, from int) int {
 	return -1
 }
 
-func replaceQuotes(tokens []Token, s *stateCore) {
+func replaceQuotes(tokens []Token, s *StateCore) {
 	var stack []stackItem
 	var changed map[int][]rune
 
@@ -139,11 +139,11 @@ func replaceQuotes(tokens []Token, s *stateCore) {
 								changed = make(map[int][]rune)
 							}
 							if isSingle {
-								item.text[item.pos] = s.md.options.Quotes[2]
-								text[index] = s.md.options.Quotes[3]
+								item.text[item.pos] = s.Md.options.Quotes[2]
+								text[index] = s.Md.options.Quotes[3]
 							} else {
-								item.text[item.pos] = s.md.options.Quotes[0]
-								text[index] = s.md.options.Quotes[1]
+								item.text[item.pos] = s.Md.options.Quotes[0]
+								text[index] = s.Md.options.Quotes[1]
 							}
 							if _, ok := changed[i]; !ok {
 								changed[i] = text
@@ -187,12 +187,12 @@ func replaceQuotes(tokens []Token, s *stateCore) {
 	}
 }
 
-func ruleSmartQuotes(s *stateCore) {
-	if !s.md.Typographer {
+func ruleSmartQuotes(s *StateCore) {
+	if !s.Md.Typographer {
 		return
 	}
 
-	tokens := s.tokens
+	tokens := s.Tokens
 	for i := len(tokens) - 1; i >= 0; i-- {
 		tok := tokens[i]
 		if tok, ok := tok.(*Inline); ok {

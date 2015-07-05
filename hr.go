@@ -19,14 +19,14 @@ func init() {
 	hr['*'], hr['-'], hr['_'] = true, true, true
 }
 
-func ruleHR(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
-	shift := s.tShift[startLine]
+func ruleHR(s *StateBlock, startLine, endLine int, silent bool) (_ bool) {
+	shift := s.TShift[startLine]
 	if shift < 0 {
 		return
 	}
 
-	pos := s.bMarks[startLine] + shift
-	src := s.src
+	pos := s.BMarks[startLine] + shift
+	src := s.Src
 
 	marker := src[pos]
 
@@ -35,7 +35,7 @@ func ruleHR(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
 	}
 
 	pos++
-	max := s.eMarks[startLine]
+	max := s.EMarks[startLine]
 
 	count := 1
 	for pos < max {
@@ -57,9 +57,9 @@ func ruleHR(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
 		return true
 	}
 
-	s.line = startLine + 1
-	s.pushToken(&Hr{
-		Map: [2]int{startLine, s.line},
+	s.Line = startLine + 1
+	s.PushToken(&Hr{
+		Map: [2]int{startLine, s.Line},
 	})
 
 	return true

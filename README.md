@@ -63,7 +63,7 @@ Rendering spec/spec-0.20.txt on a Intel(R) Core(TM) i5-2400 CPU @ 3.10GHz
 
 ## References / Thanks
 
-[opennota/markdown](https://github.com/opennota/markdown) is a partial port of an awesome JavaScript markdown parser [markdown-it](https://github.com/markdown-it/markdown-it), written by Alex Kocharin and Vitaly Puzrin. It doesn't support plugins and all the rules are hardcoded for the sake of speed.
+[opennota/markdown](https://github.com/opennota/markdown) is a partial port of an awesome JavaScript markdown parser [markdown-it](https://github.com/markdown-it/markdown-it), written by Alex Kocharin and Vitaly Puzrin.
 
 ## See also
 

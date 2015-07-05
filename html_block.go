@@ -122,18 +122,18 @@ func matchTagName(s string) string {
 	}
 }
 
-func ruleHTMLBlock(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
-	if !s.md.HTML {
+func ruleHTMLBlock(s *StateBlock, startLine, endLine int, silent bool) (_ bool) {
+	if !s.Md.HTML {
 		return
 	}
 
-	shift := s.tShift[startLine]
+	shift := s.TShift[startLine]
 	if shift < 0 {
 		return
 	}
 
-	pos := s.bMarks[startLine] + shift
-	max := s.eMarks[startLine]
+	pos := s.BMarks[startLine] + shift
+	max := s.EMarks[startLine]
 
 	if shift > 3 {
 		return
@@ -143,7 +143,7 @@ func ruleHTMLBlock(s *stateBlock, startLine, endLine int, silent bool) (_ bool) 
 		return
 	}
 
-	src := s.src
+	src := s.Src
 
 	if src[pos] != '<' {
 		return
@@ -174,14 +174,14 @@ func ruleHTMLBlock(s *stateBlock, startLine, endLine int, silent bool) (_ bool) 
 	}
 
 	nextLine := startLine + 1
-	for nextLine < s.lineMax && !s.isLineEmpty(nextLine) {
+	for nextLine < s.LineMax && !s.IsLineEmpty(nextLine) {
 		nextLine++
 	}
 
-	s.line = nextLine
-	s.pushToken(&HTMLBlock{
-		Content: s.lines(startLine, nextLine, 0, true),
-		Map:     [2]int{startLine, s.line},
+	s.Line = nextLine
+	s.PushToken(&HTMLBlock{
+		Content: s.Lines(startLine, nextLine, 0, true),
+		Map:     [2]int{startLine, s.Line},
 	})
 
 	return true

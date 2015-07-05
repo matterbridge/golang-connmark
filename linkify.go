@@ -28,10 +28,10 @@ func isLinkClose(s string) bool {
 	return s[1] == '/'
 }
 
-func ruleLinkify(s *stateCore) {
-	blockTokens := s.tokens
+func ruleLinkify(s *StateCore) {
+	blockTokens := s.Tokens
 
-	if !s.md.Linkify {
+	if !s.Md.Linkify {
 		return
 	}
 

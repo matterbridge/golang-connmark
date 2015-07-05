@@ -13,15 +13,15 @@
 
 package markdown
 
-func ruleNewline(s *stateInline, silent bool) (_ bool) {
-	pos := s.pos
-	src := s.src
+func ruleNewline(s *StateInline, silent bool) (_ bool) {
+	pos := s.Pos
+	src := s.Src
 
 	if src[pos] != '\n' {
 		return
 	}
 
-	pending := s.pending.Bytes()
+	pending := s.Pending.Bytes()
 	n := len(pending) - 1
 
 	if !silent {
@@ -31,25 +31,25 @@ func ruleNewline(s *stateInline, silent bool) (_ bool) {
 				for n >= 0 && pending[n] == ' ' {
 					n--
 				}
-				s.pending.Truncate(n + 1)
-				s.pushToken(&Hardbreak{})
+				s.Pending.Truncate(n + 1)
+				s.PushToken(&Hardbreak{})
 			} else {
-				s.pending.Truncate(n)
-				s.pushToken(&Softbreak{})
+				s.Pending.Truncate(n)
+				s.PushToken(&Softbreak{})
 			}
 		} else {
-			s.pushToken(&Softbreak{})
+			s.PushToken(&Softbreak{})
 		}
 	}
 
 	pos++
-	max := s.posMax
+	max := s.PosMax
 
 	for pos < max && src[pos] == ' ' {
 		pos++
 	}
 
-	s.pos = pos
+	s.Pos = pos
 
 	return true
 }

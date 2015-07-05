@@ -15,16 +15,18 @@ package markdown
 
 import "strings"
 
-func ruleReference(s *stateBlock, startLine, _ int, silent bool) (_ bool) {
-	pos := s.bMarks[startLine] + s.tShift[startLine]
-	src := s.src
+var referenceTerminatedBy []BlockRule
+
+func ruleReference(s *StateBlock, startLine, _ int, silent bool) (_ bool) {
+	pos := s.BMarks[startLine] + s.TShift[startLine]
+	src := s.Src
 
 	if src[pos] != '[' {
 		return
 	}
 
 	pos++
-	max := s.eMarks[startLine]
+	max := s.EMarks[startLine]
 
 	for pos < max {
 		if src[pos] == ']' && src[pos-1] != '\\' {
@@ -40,29 +42,21 @@ func ruleReference(s *stateBlock, startLine, _ int, silent bool) (_ bool) {
 	}
 
 	nextLine := startLine + 1
-	endLine := s.lineMax
+	endLine := s.LineMax
 outer:
-	for ; nextLine < endLine && !s.isLineEmpty(nextLine); nextLine++ {
-		if s.tShift[nextLine]-s.blkIndent > 3 {
+	for ; nextLine < endLine && !s.IsLineEmpty(nextLine); nextLine++ {
+		if s.TShift[nextLine]-s.BlkIndent > 3 {
 			continue
 		}
 
-		for _, r := range []blockRule{
-			ruleFence,
-			ruleBlockQuote,
-			ruleHR,
-			ruleList,
-			ruleHeading,
-			ruleHTMLBlock,
-			ruleTable,
-		} {
+		for _, r := range referenceTerminatedBy {
 			if r(s, nextLine, endLine, true) {
 				break outer
 			}
 		}
 	}
 
-	str := strings.TrimSpace(s.lines(startLine, nextLine, s.blkIndent, false))
+	str := strings.TrimSpace(s.Lines(startLine, nextLine, s.BlkIndent, false))
 	max = len(str)
 	lines := 0
 	var labelEnd int
@@ -145,17 +139,17 @@ outer:
 		return true
 	}
 
-	if s.env.References == nil {
-		s.env.References = make(map[string]map[string]string)
+	if s.Env.References == nil {
+		s.Env.References = make(map[string]map[string]string)
 	}
-	if _, ok := s.env.References[label]; !ok {
-		s.env.References[label] = map[string]string{
+	if _, ok := s.Env.References[label]; !ok {
+		s.Env.References[label] = map[string]string{
 			"title": title,
 			"href":  href,
 		}
 	}
 
-	s.line = startLine + lines + 1
+	s.Line = startLine + lines + 1
 
 	return true
 }

@@ -21,8 +21,8 @@ import (
 
 type Markdown struct {
 	options
-	block         block
-	inline        inline
+	Block         ParserBlock
+	Inline        ParserInline
 	renderOptions RenderOptions
 }
 
@@ -42,11 +42,13 @@ type options struct {
 	MaxNesting  int     // maximum nesting level
 }
 
-type environment struct {
+type Environment struct {
 	References map[string]map[string]string
 }
 
-type coreRule func(*stateCore)
+type CoreRule func(*StateCore)
+
+var coreRules []CoreRule
 
 func New(opts ...option) *Markdown {
 	m := &Markdown{
@@ -70,21 +72,16 @@ func (m *Markdown) Parse(src []byte) []Token {
 		return nil
 	}
 
-	s := &stateCore{
-		md:  m,
-		env: &environment{},
+	s := &StateCore{
+		Md:  m,
+		Env: &Environment{},
 	}
-	s.tokens = m.block.parse(src, m, s.env)
+	s.Tokens = m.Block.Parse(src, m, s.Env)
 
-	for _, r := range []coreRule{
-		ruleInline,
-		ruleLinkify,
-		ruleReplacements,
-		ruleSmartQuotes,
-	} {
+	for _, r := range coreRules {
 		r(s)
 	}
-	return s.tokens
+	return s.Tokens
 }
 
 func (m *Markdown) Render(w io.Writer, src []byte) error {

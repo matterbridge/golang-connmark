@@ -13,10 +13,10 @@
 
 package markdown
 
-func ruleInline(s *stateCore) {
-	for _, tok := range s.tokens {
+func ruleInline(s *StateCore) {
+	for _, tok := range s.Tokens {
 		if tok, ok := tok.(*Inline); ok {
-			tok.Children = s.md.inline.parse(tok.Content, s.md, s.env)
+			tok.Children = s.Md.Inline.Parse(tok.Content, s.Md, s.Env)
 		}
 	}
 }

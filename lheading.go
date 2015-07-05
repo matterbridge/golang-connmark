@@ -21,62 +21,62 @@ func init() {
 	under['-'], under['='] = true, true
 }
 
-func ruleLHeading(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
+func ruleLHeading(s *StateBlock, startLine, endLine int, silent bool) (_ bool) {
 	nextLine := startLine + 1
 
 	if nextLine >= endLine {
 		return
 	}
 
-	shift := s.tShift[nextLine]
-	if shift < s.blkIndent {
+	shift := s.TShift[nextLine]
+	if shift < s.BlkIndent {
 		return
 	}
 
-	if shift-s.blkIndent > 3 {
+	if shift-s.BlkIndent > 3 {
 		return
 	}
 
-	pos := s.bMarks[nextLine] + shift
-	max := s.eMarks[nextLine]
+	pos := s.BMarks[nextLine] + shift
+	max := s.EMarks[nextLine]
 
 	if pos >= max {
 		return
 	}
 
-	src := s.src
+	src := s.Src
 	marker := src[pos]
 
 	if !under[marker] {
 		return
 	}
 
-	pos = s.skipBytes(pos, marker)
+	pos = s.SkipBytes(pos, marker)
 
-	pos = s.skipSpaces(pos)
+	pos = s.SkipSpaces(pos)
 
 	if pos < max {
 		return
 	}
 
-	pos = s.bMarks[startLine] + s.tShift[startLine]
+	pos = s.BMarks[startLine] + s.TShift[startLine]
 
-	s.line = nextLine + 1
+	s.Line = nextLine + 1
 
 	hLevel := 1
 	if marker == '-' {
 		hLevel++
 	}
 
-	s.pushOpeningToken(&HeadingOpen{
+	s.PushOpeningToken(&HeadingOpen{
 		HLevel: hLevel,
-		Map:    [2]int{startLine, s.line},
+		Map:    [2]int{startLine, s.Line},
 	})
-	s.pushToken(&Inline{
-		Content: strings.TrimSpace(src[pos:s.eMarks[startLine]]),
-		Map:     [2]int{startLine, s.line - 1},
+	s.PushToken(&Inline{
+		Content: strings.TrimSpace(src[pos:s.EMarks[startLine]]),
+		Map:     [2]int{startLine, s.Line - 1},
 	})
-	s.pushClosingToken(&HeadingClose{HLevel: hLevel})
+	s.PushClosingToken(&HeadingClose{HLevel: hLevel})
 
 	return true
 }

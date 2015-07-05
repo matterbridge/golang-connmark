@@ -13,85 +13,75 @@
 
 package markdown
 
-type block struct {
+type ParserBlock struct {
 }
 
-type blockRule func(*stateBlock, int, int, bool) bool
+type BlockRule func(*StateBlock, int, int, bool) bool
 
-func (b block) parse(src []byte, md *Markdown, env *environment) []Token {
+var blockRules []BlockRule
+
+func (b ParserBlock) Parse(src []byte, md *Markdown, env *Environment) []Token {
 	str, bMarks, eMarks, tShift := normalizeAndIndex(src)
 	bMarks = append(bMarks, len(str))
 	eMarks = append(eMarks, len(str))
 	tShift = append(tShift, 0)
-	var s stateBlock
-	s.bMarks = bMarks
-	s.eMarks = eMarks
-	s.tShift = tShift
-	s.lineMax = len(bMarks) - 1
-	s.src = str
-	s.md = md
-	s.env = env
+	var s StateBlock
+	s.BMarks = bMarks
+	s.EMarks = eMarks
+	s.TShift = tShift
+	s.LineMax = len(bMarks) - 1
+	s.Src = str
+	s.Md = md
+	s.Env = env
 
-	b.tokenize(&s, s.line, s.lineMax)
+	b.Tokenize(&s, s.Line, s.LineMax)
 
-	return s.tokens
+	return s.Tokens
 }
 
-func (block) tokenize(s *stateBlock, startLine, endLine int) {
+func (ParserBlock) Tokenize(s *StateBlock, startLine, endLine int) {
 	line := startLine
 	hasEmptyLines := false
-	maxNesting := s.md.MaxNesting
+	maxNesting := s.Md.MaxNesting
 
 	for line < endLine {
-		line = s.skipEmptyLines(line)
-		s.line = line
+		line = s.SkipEmptyLines(line)
+		s.Line = line
 		if line >= endLine {
 			break
 		}
 
-		if s.tShift[line] < s.blkIndent {
+		if s.TShift[line] < s.BlkIndent {
 			break
 		}
 
-		if s.level >= maxNesting {
-			s.line = endLine
+		if s.Level >= maxNesting {
+			s.Line = endLine
 			break
 		}
 
-		for _, r := range []blockRule{
-			ruleCode,
-			ruleFence,
-			ruleBlockQuote,
-			ruleHR,
-			ruleList,
-			ruleReference,
-			ruleHeading,
-			ruleLHeading,
-			ruleHTMLBlock,
-			ruleTable,
-			ruleParagraph,
-		} {
+		for _, r := range blockRules {
 			if r(s, line, endLine, false) {
 				break
 			}
 		}
 
-		s.tight = !hasEmptyLines
+		s.Tight = !hasEmptyLines
 
-		if s.isLineEmpty(s.line - 1) {
+		if s.IsLineEmpty(s.Line - 1) {
 			hasEmptyLines = true
 		}
 
-		line = s.line
+		line = s.Line
 
-		if line < endLine && s.isLineEmpty(line) {
+		if line < endLine && s.IsLineEmpty(line) {
 			hasEmptyLines = true
 			line++
 
-			if line < endLine && s.parentType == ptList && s.isLineEmpty(line) {
+			if line < endLine && s.ParentType == ptList && s.IsLineEmpty(line) {
 				break
 			}
-			s.line = line
+			s.Line = line
 		}
 	}
 }

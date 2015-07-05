@@ -18,10 +18,10 @@ import (
 	"unicode/utf8"
 )
 
-func scanDelims(s *stateInline, start int) (canOpen bool, canClose bool, count int) {
+func scanDelims(s *StateInline, start int) (canOpen bool, canClose bool, count int) {
 	pos := start
-	max := s.posMax
-	src := s.src
+	max := s.PosMax
+	src := s.Src
 	marker := src[start]
 
 	lastChar, lastLen := utf8.DecodeLastRuneInString(src[:start])
@@ -58,10 +58,10 @@ func init() {
 	em['*'], em['_'] = true, true
 }
 
-func ruleEmphasis(s *stateInline, silent bool) (_ bool) {
-	src := s.src
-	max := s.posMax
-	start := s.pos
+func ruleEmphasis(s *StateInline, silent bool) (_ bool) {
+	src := s.Src
+	max := s.PosMax
+	start := s.Pos
 	marker := src[start]
 
 	if !em[marker] {
@@ -73,18 +73,18 @@ func ruleEmphasis(s *stateInline, silent bool) (_ bool) {
 	}
 
 	canOpen, _, startCount := scanDelims(s, start)
-	s.pos += startCount
+	s.Pos += startCount
 	if !canOpen {
-		s.pending.WriteString(src[start:s.pos])
+		s.Pending.WriteString(src[start:s.Pos])
 		return true
 	}
 
 	stack := []int{startCount}
 	found := false
 
-	for s.pos < max {
-		if src[s.pos] == marker {
-			canOpen, canClose, count := scanDelims(s, s.pos)
+	for s.Pos < max {
+		if src[s.Pos] == marker {
+			canOpen, canClose, count := scanDelims(s, s.Pos)
 
 			if canClose {
 				oldCount := stack[len(stack)-1]
@@ -103,7 +103,7 @@ func ruleEmphasis(s *stateInline, silent bool) (_ bool) {
 						break
 					}
 
-					s.pos += oldCount
+					s.Pos += oldCount
 					oldCount = stack[len(stack)-1]
 					stack = stack[:len(stack)-1]
 				}
@@ -114,7 +114,7 @@ func ruleEmphasis(s *stateInline, silent bool) (_ bool) {
 					break
 				}
 
-				s.pos += count
+				s.Pos += count
 				continue
 			}
 
@@ -122,40 +122,40 @@ func ruleEmphasis(s *stateInline, silent bool) (_ bool) {
 				stack = append(stack, count)
 			}
 
-			s.pos += count
+			s.Pos += count
 			continue
 		}
 
-		s.md.inline.skipToken(s)
+		s.Md.Inline.SkipToken(s)
 	}
 
 	if !found {
-		s.pos = start
+		s.Pos = start
 		return
 	}
 
-	s.posMax = s.pos
-	s.pos = start + startCount
+	s.PosMax = s.Pos
+	s.Pos = start + startCount
 
 	count := startCount
 	for ; count > 1; count -= 2 {
-		s.pushOpeningToken(&StrongOpen{})
+		s.PushOpeningToken(&StrongOpen{})
 	}
 	if count > 0 {
-		s.pushOpeningToken(&EmphasisOpen{})
+		s.PushOpeningToken(&EmphasisOpen{})
 	}
 
-	s.md.inline.tokenize(s)
+	s.Md.Inline.Tokenize(s)
 
 	if count%2 != 0 {
-		s.pushClosingToken(&EmphasisClose{})
+		s.PushClosingToken(&EmphasisClose{})
 	}
 	for count = startCount; count > 1; count -= 2 {
-		s.pushClosingToken(&StrongClose{})
+		s.PushClosingToken(&StrongClose{})
 	}
 
-	s.pos = s.posMax + startCount
-	s.posMax = max
+	s.Pos = s.PosMax + startCount
+	s.PosMax = max
 
 	return true
 }

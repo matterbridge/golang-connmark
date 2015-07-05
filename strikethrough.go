@@ -13,10 +13,10 @@
 
 package markdown
 
-func ruleStrikeThrough(s *stateInline, silent bool) (_ bool) {
-	start := s.pos
-	max := s.posMax
-	src := s.src
+func ruleStrikeThrough(s *StateInline, silent bool) (_ bool) {
+	start := s.Pos
+	max := s.PosMax
+	src := s.Src
 
 	if src[start] != '~' {
 		return
@@ -29,8 +29,8 @@ func ruleStrikeThrough(s *stateInline, silent bool) (_ bool) {
 	canOpen, canClose, delims := scanDelims(s, start)
 	startCount := delims
 	if !canOpen {
-		s.pos += startCount
-		s.pending.WriteString(src[start:s.pos])
+		s.Pos += startCount
+		s.Pending.WriteString(src[start:s.Pos])
 		return true
 	}
 
@@ -38,51 +38,51 @@ func ruleStrikeThrough(s *stateInline, silent bool) (_ bool) {
 	if stack <= 0 {
 		return
 	}
-	s.pos = start + startCount
+	s.Pos = start + startCount
 
 	var found bool
-	for s.pos < max {
-		if src[s.pos] == '~' {
-			canOpen, canClose, delims = scanDelims(s, s.pos)
+	for s.Pos < max {
+		if src[s.Pos] == '~' {
+			canOpen, canClose, delims = scanDelims(s, s.Pos)
 			count := delims
 			tagCount := count / 2
 			if canClose {
 				if tagCount >= stack {
-					s.pos += count - 2
+					s.Pos += count - 2
 					found = true
 					break
 				}
 				stack -= tagCount
-				s.pos += count
+				s.Pos += count
 				continue
 			}
 
 			if canOpen {
 				stack += tagCount
 			}
-			s.pos += count
+			s.Pos += count
 			continue
 		}
 
-		s.md.inline.skipToken(s)
+		s.Md.Inline.SkipToken(s)
 	}
 
 	if !found {
-		s.pos = start
+		s.Pos = start
 		return
 	}
 
-	s.posMax = s.pos
-	s.pos = start + 2
+	s.PosMax = s.Pos
+	s.Pos = start + 2
 
-	s.pushOpeningToken(&StrikethroughOpen{})
+	s.PushOpeningToken(&StrikethroughOpen{})
 
-	s.md.inline.tokenize(s)
+	s.Md.Inline.Tokenize(s)
 
-	s.pushClosingToken(&StrikethroughClose{})
+	s.PushClosingToken(&StrikethroughClose{})
 
-	s.pos = s.posMax + 2
-	s.posMax = max
+	s.Pos = s.PosMax + 2
+	s.PosMax = max
 
 	return true
 }

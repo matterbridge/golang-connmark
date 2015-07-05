@@ -15,15 +15,15 @@ package markdown
 
 import "strings"
 
-func ruleHeading(s *stateBlock, startLine, _ int, silent bool) (_ bool) {
-	shift := s.tShift[startLine]
+func ruleHeading(s *StateBlock, startLine, _ int, silent bool) (_ bool) {
+	shift := s.TShift[startLine]
 	if shift < 0 {
 		return
 	}
 
-	pos := s.bMarks[startLine] + shift
-	max := s.eMarks[startLine]
-	src := s.src
+	pos := s.BMarks[startLine] + shift
+	max := s.EMarks[startLine]
+	src := s.Src
 
 	if pos >= max || src[pos] != '#' {
 		return
@@ -45,26 +45,26 @@ func ruleHeading(s *stateBlock, startLine, _ int, silent bool) (_ bool) {
 		return true
 	}
 
-	max = s.skipBytesBack(max, ' ', pos)
-	tmp := s.skipBytesBack(max, '#', pos)
+	max = s.SkipBytesBack(max, ' ', pos)
+	tmp := s.SkipBytesBack(max, '#', pos)
 	if tmp > pos && src[tmp-1] == ' ' {
 		max = tmp
 	}
 
-	s.line = startLine + 1
+	s.Line = startLine + 1
 
-	s.pushOpeningToken(&HeadingOpen{
+	s.PushOpeningToken(&HeadingOpen{
 		HLevel: level,
-		Map:    [2]int{startLine, s.line},
+		Map:    [2]int{startLine, s.Line},
 	})
 
 	if pos < max {
-		s.pushToken(&Inline{
+		s.PushToken(&Inline{
 			Content: strings.TrimSpace(src[pos:max]),
-			Map:     [2]int{startLine, s.line},
+			Map:     [2]int{startLine, s.Line},
 		})
 	}
-	s.pushClosingToken(&HeadingClose{HLevel: level})
+	s.PushClosingToken(&HeadingClose{HLevel: level})
 
 	return true
 }

@@ -19,74 +19,74 @@ const (
 	ptBlockQuote
 )
 
-type stateBlock struct {
-	stateCore
+type StateBlock struct {
+	StateCore
 
-	bMarks     []int // offsets of the line beginnings
-	eMarks     []int // offsets of the line endings
-	tShift     []int // indents for each line
-	blkIndent  int   // required block content indent (in a list etc.)
-	line       int   // line index in the source string
-	lineMax    int   // number of lines
-	tight      bool  // loose or tight mode for lists
-	parentType byte  // parent block type
-	level      int
+	BMarks     []int // offsets of the line beginnings
+	EMarks     []int // offsets of the line endings
+	TShift     []int // indents for each line
+	BlkIndent  int   // required block content indent (in a list etc.)
+	Line       int   // line index in the source string
+	LineMax    int   // number of lines
+	Tight      bool  // loose or tight mode for lists
+	ParentType byte  // parent block type
+	Level      int
 }
 
-func (s *stateBlock) isLineEmpty(n int) bool {
-	return s.bMarks[n]+s.tShift[n] >= s.eMarks[n]
+func (s *StateBlock) IsLineEmpty(n int) bool {
+	return s.BMarks[n]+s.TShift[n] >= s.EMarks[n]
 }
 
-func (s *stateBlock) skipEmptyLines(from int) int {
-	for from < s.lineMax && s.isLineEmpty(from) {
+func (s *StateBlock) SkipEmptyLines(from int) int {
+	for from < s.LineMax && s.IsLineEmpty(from) {
 		from++
 	}
 	return from
 }
 
-func (s *stateBlock) skipSpaces(pos int) int {
-	src := s.src
+func (s *StateBlock) SkipSpaces(pos int) int {
+	src := s.Src
 	for pos < len(src) && src[pos] == ' ' {
 		pos++
 	}
 	return pos
 }
 
-func (s *stateBlock) skipBytes(pos int, b byte) int {
-	src := s.src
+func (s *StateBlock) SkipBytes(pos int, b byte) int {
+	src := s.Src
 	for pos < len(src) && src[pos] == b {
 		pos++
 	}
 	return pos
 }
 
-func (s *stateBlock) skipBytesBack(pos int, b byte, min int) int {
+func (s *StateBlock) SkipBytesBack(pos int, b byte, min int) int {
 	for pos > min {
 		pos--
-		if s.src[pos] != b {
+		if s.Src[pos] != b {
 			return pos + 1
 		}
 	}
 	return pos
 }
 
-func (s *stateBlock) lines(begin, end, indent int, keepLastLf bool) string {
+func (s *StateBlock) Lines(begin, end, indent int, keepLastLf bool) string {
 	if begin == end {
 		return ""
 	}
 
-	src := s.src
+	src := s.Src
 
 	if begin+1 == end {
-		shift := s.tShift[begin]
+		shift := s.TShift[begin]
 		if shift < 0 {
 			shift = 0
 		} else if shift > indent {
 			shift = indent
 		}
-		first := s.bMarks[begin] + shift
+		first := s.BMarks[begin] + shift
 
-		last := s.eMarks[begin]
+		last := s.EMarks[begin]
 		if keepLastLf && last < len(src) {
 			last++
 		}
@@ -99,14 +99,14 @@ func (s *stateBlock) lines(begin, end, indent int, keepLastLf bool) string {
 	var previousLast int
 	adjoin := true
 	for line := begin; line < end; line++ {
-		shift := s.tShift[line]
+		shift := s.TShift[line]
 		if shift < 0 {
 			shift = 0
 		} else if shift > indent {
 			shift = indent
 		}
-		first := s.bMarks[line] + shift
-		last := s.eMarks[line]
+		first := s.BMarks[line] + shift
+		last := s.EMarks[line]
 		if line+1 < end || (keepLastLf && last < len(src)) {
 			last++
 		}
@@ -126,14 +126,14 @@ func (s *stateBlock) lines(begin, end, indent int, keepLastLf bool) string {
 	buf := make([]byte, size)
 	i := 0
 	for line := begin; line < end; line++ {
-		shift := s.tShift[line]
+		shift := s.TShift[line]
 		if shift < 0 {
 			shift = 0
 		} else if shift > indent {
 			shift = indent
 		}
-		first := s.bMarks[line] + shift
-		last := s.eMarks[line]
+		first := s.BMarks[line] + shift
+		last := s.EMarks[line]
 		if line+1 < end || (keepLastLf && last < len(src)) {
 			last++
 		}
@@ -144,19 +144,19 @@ func (s *stateBlock) lines(begin, end, indent int, keepLastLf bool) string {
 	return string(buf)
 }
 
-func (s *stateBlock) pushToken(tok Token) {
-	tok.SetLevel(s.level)
-	s.tokens = append(s.tokens, tok)
+func (s *StateBlock) PushToken(tok Token) {
+	tok.SetLevel(s.Level)
+	s.Tokens = append(s.Tokens, tok)
 }
 
-func (s *stateBlock) pushOpeningToken(tok Token) {
-	tok.SetLevel(s.level)
-	s.level++
-	s.tokens = append(s.tokens, tok)
+func (s *StateBlock) PushOpeningToken(tok Token) {
+	tok.SetLevel(s.Level)
+	s.Level++
+	s.Tokens = append(s.Tokens, tok)
 }
 
-func (s *stateBlock) pushClosingToken(tok Token) {
-	s.level--
-	tok.SetLevel(s.level)
-	s.tokens = append(s.tokens, tok)
+func (s *StateBlock) PushClosingToken(tok Token) {
+	s.Level--
+	tok.SetLevel(s.Level)
+	s.Tokens = append(s.Tokens, tok)
 }

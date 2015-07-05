@@ -15,9 +15,9 @@ package markdown
 
 import "strings"
 
-func ruleAutolink(s *stateInline, silent bool) (_ bool) {
-	pos := s.pos
-	src := s.src
+func ruleAutolink(s *StateInline, silent bool) (_ bool) {
+	pos := s.Pos
+	src := s.Src
 
 	if src[pos] != '<' {
 		return
@@ -37,12 +37,12 @@ func ruleAutolink(s *stateInline, silent bool) (_ bool) {
 		}
 
 		if !silent {
-			s.pushOpeningToken(&LinkOpen{Href: href})
-			s.pushToken(&Text{Content: normalizeLinkText(link)})
-			s.pushClosingToken(&LinkClose{})
+			s.PushOpeningToken(&LinkOpen{Href: href})
+			s.PushToken(&Text{Content: normalizeLinkText(link)})
+			s.PushClosingToken(&LinkClose{})
 		}
 
-		s.pos += len(link) + 2
+		s.Pos += len(link) + 2
 
 		return true
 	}
@@ -55,12 +55,12 @@ func ruleAutolink(s *stateInline, silent bool) (_ bool) {
 		}
 
 		if !silent {
-			s.pushOpeningToken(&LinkOpen{Href: href})
-			s.pushToken(&Text{Content: email})
-			s.pushClosingToken(&LinkClose{})
+			s.PushOpeningToken(&LinkOpen{Href: href})
+			s.PushToken(&Text{Content: email})
+			s.PushClosingToken(&LinkClose{})
 		}
 
-		s.pos += len(email) + 2
+		s.Pos += len(email) + 2
 
 		return true
 	}

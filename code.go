@@ -13,8 +13,8 @@
 
 package markdown
 
-func ruleCode(s *stateBlock, startLine, endLine int, _ bool) (_ bool) {
-	if s.tShift[startLine]-s.blkIndent < 4 {
+func ruleCode(s *StateBlock, startLine, endLine int, _ bool) (_ bool) {
+	if s.TShift[startLine]-s.BlkIndent < 4 {
 		return
 	}
 
@@ -22,12 +22,12 @@ func ruleCode(s *stateBlock, startLine, endLine int, _ bool) (_ bool) {
 	last := nextLine
 
 	for nextLine < endLine {
-		if s.isLineEmpty(nextLine) {
+		if s.IsLineEmpty(nextLine) {
 			nextLine++
 			continue
 		}
 
-		if s.tShift[nextLine]-s.blkIndent > 3 {
+		if s.TShift[nextLine]-s.BlkIndent > 3 {
 			nextLine++
 			last = nextLine
 			continue
@@ -36,10 +36,10 @@ func ruleCode(s *stateBlock, startLine, endLine int, _ bool) (_ bool) {
 		break
 	}
 
-	s.line = nextLine
-	s.pushToken(&CodeBlock{
-		Content: s.lines(startLine, last, 4+s.blkIndent, true),
-		Map:     [2]int{startLine, s.line},
+	s.Line = nextLine
+	s.PushToken(&CodeBlock{
+		Content: s.Lines(startLine, last, 4+s.BlkIndent, true),
+		Map:     [2]int{startLine, s.Line},
 	})
 
 	return true

@@ -15,51 +15,51 @@ package markdown
 
 import "bytes"
 
-type stateInline struct {
-	stateCore
+type StateInline struct {
+	StateCore
 
-	pos          int
-	posMax       int
-	level        int
-	pending      bytes.Buffer
-	pendingLevel int
+	Pos          int
+	PosMax       int
+	Level        int
+	Pending      bytes.Buffer
+	PendingLevel int
 
-	cache map[int]int
+	Cache map[int]int
 }
 
-func (s *stateInline) pushToken(tok Token) {
-	if s.pending.Len() > 0 {
-		s.pushPending()
+func (s *StateInline) PushToken(tok Token) {
+	if s.Pending.Len() > 0 {
+		s.PushPending()
 	}
-	tok.SetLevel(s.level)
-	s.pendingLevel = s.level
-	s.tokens = append(s.tokens, tok)
+	tok.SetLevel(s.Level)
+	s.PendingLevel = s.Level
+	s.Tokens = append(s.Tokens, tok)
 }
 
-func (s *stateInline) pushOpeningToken(tok Token) {
-	if s.pending.Len() > 0 {
-		s.pushPending()
+func (s *StateInline) PushOpeningToken(tok Token) {
+	if s.Pending.Len() > 0 {
+		s.PushPending()
 	}
-	tok.SetLevel(s.level)
-	s.level++
-	s.pendingLevel = s.level
-	s.tokens = append(s.tokens, tok)
+	tok.SetLevel(s.Level)
+	s.Level++
+	s.PendingLevel = s.Level
+	s.Tokens = append(s.Tokens, tok)
 }
 
-func (s *stateInline) pushClosingToken(tok Token) {
-	if s.pending.Len() > 0 {
-		s.pushPending()
+func (s *StateInline) PushClosingToken(tok Token) {
+	if s.Pending.Len() > 0 {
+		s.PushPending()
 	}
-	s.level--
-	tok.SetLevel(s.level)
-	s.pendingLevel = s.level
-	s.tokens = append(s.tokens, tok)
+	s.Level--
+	tok.SetLevel(s.Level)
+	s.PendingLevel = s.Level
+	s.Tokens = append(s.Tokens, tok)
 }
 
-func (s *stateInline) pushPending() {
-	s.tokens = append(s.tokens, &Text{
-		Content: s.pending.String(),
-		Lvl:     s.pendingLevel,
+func (s *StateInline) PushPending() {
+	s.Tokens = append(s.Tokens, &Text{
+		Content: s.Pending.String(),
+		Lvl:     s.PendingLevel,
 	})
-	s.pending.Reset()
+	s.Pending.Reset()
 }

@@ -21,15 +21,15 @@ func init() {
 	fence['~'], fence['`'] = true, true
 }
 
-func ruleFence(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
-	shift := s.tShift[startLine]
+func ruleFence(s *StateBlock, startLine, endLine int, silent bool) (_ bool) {
+	shift := s.TShift[startLine]
 	if shift < 0 {
 		return
 	}
 
-	pos := s.bMarks[startLine] + shift
-	max := s.eMarks[startLine]
-	src := s.src
+	pos := s.BMarks[startLine] + shift
+	max := s.EMarks[startLine]
+	src := s.Src
 
 	if pos+3 > max {
 		return
@@ -42,7 +42,7 @@ func ruleFence(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
 	}
 
 	mem := pos
-	pos = s.skipBytes(pos, marker)
+	pos = s.SkipBytes(pos, marker)
 	len := pos - mem
 	if len < 3 {
 		return
@@ -67,15 +67,15 @@ func ruleFence(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
 			break
 		}
 
-		mem = s.bMarks[nextLine] + s.tShift[nextLine]
+		mem = s.BMarks[nextLine] + s.TShift[nextLine]
 		pos = mem
-		max = s.eMarks[nextLine]
+		max = s.EMarks[nextLine]
 
 		if pos >= max {
 			continue
 		}
 
-		if s.tShift[nextLine] < s.blkIndent {
+		if s.TShift[nextLine] < s.BlkIndent {
 			break
 		}
 
@@ -83,17 +83,17 @@ func ruleFence(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
 			continue
 		}
 
-		if s.tShift[nextLine]-s.blkIndent > 3 {
+		if s.TShift[nextLine]-s.BlkIndent > 3 {
 			continue
 		}
 
-		pos = s.skipBytes(pos, marker)
+		pos = s.SkipBytes(pos, marker)
 
 		if pos-mem < len {
 			continue
 		}
 
-		pos = s.skipSpaces(pos)
+		pos = s.SkipSpaces(pos)
 		if pos < max {
 			continue
 		}
@@ -103,14 +103,14 @@ func ruleFence(s *stateBlock, startLine, endLine int, silent bool) (_ bool) {
 		break
 	}
 
-	s.line = nextLine
+	s.Line = nextLine
 	if haveEndMarker {
-		s.line++
+		s.Line++
 	}
 
-	s.pushToken(&Fence{
+	s.PushToken(&Fence{
 		Params:  params,
-		Content: s.lines(startLine+1, nextLine, s.tShift[startLine], true),
+		Content: s.Lines(startLine+1, nextLine, s.TShift[startLine], true),
 		Map:     [2]int{startLine, nextLine},
 	})
 

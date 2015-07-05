@@ -13,15 +13,15 @@
 
 package markdown
 
-func ruleImage(s *stateInline, silent bool) (_ bool) {
-	pos := s.pos
-	max := s.posMax
+func ruleImage(s *StateInline, silent bool) (_ bool) {
+	pos := s.Pos
+	max := s.PosMax
 
 	if pos+2 >= max {
 		return
 	}
 
-	src := s.src
+	src := s.Src
 	if src[pos] != '!' {
 		return
 	}
@@ -45,7 +45,7 @@ func ruleImage(s *stateInline, silent bool) (_ bool) {
 			return
 		}
 
-		url, endpos, ok := parseLinkDestination(src, pos, s.posMax)
+		url, endpos, ok := parseLinkDestination(src, pos, s.PosMax)
 		if ok {
 			url = normalizeLink(url)
 			if validateLink(url) {
@@ -60,20 +60,20 @@ func ruleImage(s *stateInline, silent bool) (_ bool) {
 			return
 		}
 
-		title, _, endpos, ok = parseLinkTitle(src, pos, s.posMax)
+		title, _, endpos, ok = parseLinkTitle(src, pos, s.PosMax)
 		if pos < max && start != pos && ok {
 			pos = skipws(src, endpos, max)
 		}
 
 		if pos >= max || src[pos] != ')' {
-			s.pos = oldPos
+			s.Pos = oldPos
 			return
 		}
 
 		pos++
 
 	} else {
-		if s.env.References == nil {
+		if s.Env.References == nil {
 			return
 		}
 
@@ -96,9 +96,9 @@ func ruleImage(s *stateInline, silent bool) (_ bool) {
 			label = src[labelStart:labelEnd]
 		}
 
-		ref, ok := s.env.References[normalizeReference(label)]
+		ref, ok := s.Env.References[normalizeReference(label)]
 		if !ok {
-			s.pos = oldPos
+			s.Pos = oldPos
 			return
 		}
 
@@ -107,28 +107,28 @@ func ruleImage(s *stateInline, silent bool) (_ bool) {
 	}
 
 	if !silent {
-		s.pos = labelStart
-		s.posMax = labelEnd
+		s.Pos = labelStart
+		s.PosMax = labelEnd
 
 		src := src[labelStart:labelEnd]
 
-		var newState stateInline
-		newState.src = src
-		newState.md = s.md
-		newState.env = s.env
-		newState.posMax = len(src)
-		newState.tokens = newState.tokArr[:0]
-		newState.md.inline.tokenize(&newState)
+		var newState StateInline
+		newState.Src = src
+		newState.Md = s.Md
+		newState.Env = s.Env
+		newState.PosMax = len(src)
+		newState.Tokens = newState.TokArr[:0]
+		newState.Md.Inline.Tokenize(&newState)
 
-		s.pushToken(&Image{
+		s.PushToken(&Image{
 			Src:    href,
 			Title:  title,
-			Tokens: newState.tokens,
+			Tokens: newState.Tokens,
 		})
 	}
 
-	s.pos = pos
-	s.posMax = max
+	s.Pos = pos
+	s.PosMax = max
 
 	return true
 }

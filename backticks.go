@@ -13,9 +13,9 @@
 
 package markdown
 
-func ruleBackticks(s *stateInline, silent bool) (_ bool) {
-	pos := s.pos
-	src := s.src
+func ruleBackticks(s *StateInline, silent bool) (_ bool) {
+	pos := s.Pos
+	src := s.Src
 
 	if src[pos] != '`' {
 		return
@@ -23,7 +23,7 @@ func ruleBackticks(s *stateInline, silent bool) (_ bool) {
 
 	start := pos
 	pos++
-	max := s.posMax
+	max := s.PosMax
 
 	for pos < max && src[pos] == '`' {
 		pos++
@@ -48,20 +48,20 @@ func ruleBackticks(s *stateInline, silent bool) (_ bool) {
 
 		if end-start == len(marker) {
 			if !silent {
-				s.pushToken(&CodeInline{
+				s.PushToken(&CodeInline{
 					Content: normalizeInlineCode(src[pos:start]),
 				})
 			}
-			s.pos = end
+			s.Pos = end
 			return true
 		}
 	}
 
 	if !silent {
-		s.pending.WriteString(marker)
+		s.Pending.WriteString(marker)
 	}
 
-	s.pos += len(marker)
+	s.Pos += len(marker)
 
 	return true
 }

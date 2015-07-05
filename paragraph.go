@@ -15,44 +15,38 @@ package markdown
 
 import "strings"
 
-func ruleParagraph(s *stateBlock, startLine, _ int, _ bool) bool {
+var paragraphTerminatedBy []BlockRule
+
+func ruleParagraph(s *StateBlock, startLine, _ int, _ bool) bool {
 	nextLine := startLine + 1
-	endLine := s.lineMax
+	endLine := s.LineMax
 
 outer:
-	for ; nextLine < endLine && !s.isLineEmpty(nextLine); nextLine++ {
-		shift := s.tShift[nextLine]
-		if shift < 0 || shift-s.blkIndent > 3 {
+	for ; nextLine < endLine && !s.IsLineEmpty(nextLine); nextLine++ {
+		shift := s.TShift[nextLine]
+		if shift < 0 || shift-s.BlkIndent > 3 {
 			continue
 		}
 
-		for _, r := range []blockRule{
-			ruleFence,
-			ruleBlockQuote,
-			ruleHR,
-			ruleList,
-			ruleHeading,
-			ruleHTMLBlock,
-			ruleTable,
-		} {
+		for _, r := range paragraphTerminatedBy {
 			if r(s, nextLine, endLine, true) {
 				break outer
 			}
 		}
 	}
 
-	content := strings.TrimSpace(s.lines(startLine, nextLine, s.blkIndent, false))
+	content := strings.TrimSpace(s.Lines(startLine, nextLine, s.BlkIndent, false))
 
-	s.line = nextLine
+	s.Line = nextLine
 
-	s.pushOpeningToken(&ParagraphOpen{
-		Map: [2]int{startLine, s.line},
+	s.PushOpeningToken(&ParagraphOpen{
+		Map: [2]int{startLine, s.Line},
 	})
-	s.pushToken(&Inline{
+	s.PushToken(&Inline{
 		Content: content,
-		Map:     [2]int{startLine, s.line},
+		Map:     [2]int{startLine, s.Line},
 	})
-	s.pushClosingToken(&ParagraphClose{})
+	s.PushClosingToken(&ParagraphClose{})
 
 	return true
 }

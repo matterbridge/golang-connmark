@@ -13,14 +13,14 @@
 
 package markdown
 
-func ruleHTMLInline(s *stateInline, silent bool) (_ bool) {
-	if !s.md.HTML {
+func ruleHTMLInline(s *StateInline, silent bool) (_ bool) {
+	if !s.Md.HTML {
 		return
 	}
 
-	pos := s.pos
-	src := s.src
-	if pos+2 >= s.posMax || src[pos] != '<' {
+	pos := s.Pos
+	src := s.Src
+	if pos+2 >= s.PosMax || src[pos] != '<' {
 		return
 	}
 
@@ -34,10 +34,10 @@ func ruleHTMLInline(s *stateInline, silent bool) (_ bool) {
 	}
 
 	if !silent {
-		s.pushToken(&HTMLInline{Content: match})
+		s.PushToken(&HTMLInline{Content: match})
 	}
 
-	s.pos += len(match)
+	s.Pos += len(match)
 
 	return true
 }

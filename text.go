@@ -21,23 +21,23 @@ func init() {
 	}
 }
 
-func ruleText(s *stateInline, silent bool) (_ bool) {
-	pos := s.pos
-	max := s.posMax
-	src := s.src
+func ruleText(s *StateInline, silent bool) (_ bool) {
+	pos := s.Pos
+	max := s.PosMax
+	src := s.Src
 
 	for pos < max && !term[src[pos]] {
 		pos++
 	}
-	if pos == s.pos {
+	if pos == s.Pos {
 		return
 	}
 
 	if !silent {
-		s.pending.WriteString(src[s.pos:pos])
+		s.Pending.WriteString(src[s.Pos:pos])
 	}
 
-	s.pos = pos
+	s.Pos = pos
 
 	return true
 }
