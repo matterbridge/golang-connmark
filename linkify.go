@@ -81,9 +81,9 @@ func ruleLinkify(s *StateCore) {
 					for _, ln := range links {
 						urlText := text[ln.Start:ln.End]
 						url := urlText
-						if ln.Schema == "" {
+						if ln.Scheme == "" {
 							url = "http://" + url
-						} else if ln.Schema == "mailto:" && !strings.HasPrefix(url, "mailto:") {
+						} else if ln.Scheme == "mailto:" && !strings.HasPrefix(url, "mailto:") {
 							url = "mailto:" + url
 						}
 						url = normalizeLink(url)
