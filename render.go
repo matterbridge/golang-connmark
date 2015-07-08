@@ -185,7 +185,7 @@ func (r *Renderer) renderToken(tokens []Token, idx int, options RenderOptions) {
 		r.w.WriteString("</ol>")
 
 	case *OrderedListOpen:
-		if tok.Order > 1 {
+		if tok.Order != 1 {
 			r.w.WriteString(`<ol start="`)
 			r.w.WriteString(strconv.Itoa(tok.Order))
 			r.w.WriteString(`">`)
