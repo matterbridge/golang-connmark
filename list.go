@@ -64,6 +64,8 @@ func skipOrderedListMarker(s *StateBlock, startLine int) int {
 		return -1
 	}
 
+	start := pos
+
 	for {
 		if pos >= max {
 			return -1
@@ -73,6 +75,9 @@ func skipOrderedListMarker(s *StateBlock, startLine int) int {
 		pos++
 
 		if byteutil.IsDigit(b) {
+			if pos-start > 9 {
+				return -1
+			}
 			continue
 		}
 
