@@ -13,67 +13,83 @@
 
 package markdown
 
-import "github.com/opennota/byteutil"
+import (
+	"regexp"
+	"strings"
+
+	"github.com/opennota/byteutil"
+)
 
 var (
 	htmlBlocks = []string{
+		"address",
 		"article",
 		"aside",
+		"base",
+		"basefont",
 		"blockquote",
 		"body",
-		"button",
-		"canvas",
 		"caption",
+		"center",
 		"col",
 		"colgroup",
 		"dd",
+		"details",
+		"dialog",
+		"dir",
 		"div",
 		"dl",
 		"dt",
-		"embed",
 		"fieldset",
 		"figcaption",
 		"figure",
 		"footer",
 		"form",
+		"frame",
+		"frameset",
 		"h1",
-		"h2",
-		"h3",
-		"h4",
-		"h5",
-		"h6",
+		"head",
 		"header",
-		"hgroup",
 		"hr",
-		"iframe",
+		"html",
+		"legend",
 		"li",
-		"map",
-		"object",
+		"link",
+		"main",
+		"menu",
+		"menuitem",
+		"meta",
+		"nav",
+		"noframes",
 		"ol",
-		"output",
+		"optgroup",
+		"option",
 		"p",
+		"param",
 		"pre",
-		"progress",
-		"script",
 		"section",
-		"style",
+		"source",
+		"summary",
 		"table",
 		"tbody",
 		"td",
-		"textarea",
 		"tfoot",
 		"th",
 		"thead",
+		"title",
 		"tr",
+		"track",
 		"ul",
-		"video",
 	}
 
 	htmlBlocksSet = make(map[string]bool)
 
-	htmlSecond    [256]bool
-	piOrComment   [256]bool
-	slashOrLetter [256]bool
+	htmlSecond [256]bool
+
+	rStartCond1 = regexp.MustCompile(`(?i)^(pre|script|style)([\n\t >]|$)`)
+	rEndCond1   = regexp.MustCompile(`(?i)</(pre|script|style)>`)
+	rStartCond6 *regexp.Regexp
+	rStartCond7 = regexp.MustCompile(`(?i)^(/[a-z][a-z0-9-]*|[a-z][a-z0-9-]*(\s+[a-z_:][a-z0-9_.:-]*\s*=\s*("[^"]*"|'[^']*'|[ "'=<>\x60]))*\s*/?)>\s*$`)
 )
 
 func init() {
@@ -83,10 +99,7 @@ func init() {
 	for _, b := range "!/?abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" {
 		htmlSecond[b] = true
 	}
-	piOrComment['!'], piOrComment['?'] = true, true
-	for _, b := range "/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" {
-		slashOrLetter[b] = true
-	}
+	rStartCond6 = regexp.MustCompile(`(?i)^/?(` + strings.Join(htmlBlocks, "|") + `)(\s|$|>|/>)`)
 }
 
 func min(a, b int) int {
@@ -135,11 +148,7 @@ func ruleHTMLBlock(s *StateBlock, startLine, endLine int, silent bool) (_ bool) 
 	pos := s.BMarks[startLine] + shift
 	max := s.EMarks[startLine]
 
-	if shift > 3 {
-		return
-	}
-
-	if pos+2 >= max {
+	if pos+1 >= max {
 		return
 	}
 
@@ -149,39 +158,83 @@ func ruleHTMLBlock(s *StateBlock, startLine, endLine int, silent bool) (_ bool) 
 		return
 	}
 
-	b := src[pos+1]
+	pos++
+	b := src[pos]
 	if !htmlSecond[b] {
 		return
 	}
 
-	if slashOrLetter[b] {
-		tag := matchTagName(src[pos+1 : max])
-		if tag == "" {
-			return
+	nextLine := startLine + 1
+
+	var endCond func(string) bool
+
+	if pos+2 < max && byteutil.IsLetter(b) && rStartCond1.MatchString(src[pos:]) {
+		endCond = func(s string) bool {
+			return rEndCond1.MatchString(s)
 		}
-		if !htmlBlocksSet[tag] {
+	} else if strings.HasPrefix(src[pos:], "!--") {
+		endCond = func(s string) bool {
+			return strings.Contains(s, "-->")
+		}
+	} else if b == '?' {
+		endCond = func(s string) bool {
+			return strings.Contains(s, "?>")
+		}
+	} else if b == '!' && pos+1 < max && byteutil.IsUppercaseLetter(src[pos+1]) {
+		endCond = func(s string) bool {
+			return strings.Contains(s, ">")
+		}
+	} else if strings.HasPrefix(src[pos:], "![CDATA[") {
+		endCond = func(s string) bool {
+			return strings.Contains(s, "]]>")
+		}
+	} else if pos+2 < max && (byteutil.IsLetter(b) || b == '/' && byteutil.IsLetter(src[pos+1])) {
+		terminator := true
+		if rStartCond6.MatchString(src[pos:max]) {
+		} else if rStartCond7.MatchString(src[pos:max]) {
+			terminator = false
+		} else {
 			return
 		}
 		if silent {
-			return true
+			return terminator
 		}
-	} else if piOrComment[b] {
-		if silent {
-			return true
+		endCond = func(s string) bool {
+			return s == ""
 		}
 	} else {
 		return
 	}
 
-	nextLine := startLine + 1
-	for nextLine < s.LineMax && !s.IsLineEmpty(nextLine) {
-		nextLine++
+	if silent {
+		return true
+	}
+
+	if !endCond(src[pos:max]) {
+		for nextLine < endLine {
+			shift := s.TShift[nextLine]
+			if shift < s.BlkIndent {
+				break
+			}
+			pos := s.BMarks[nextLine] + shift
+			max := s.EMarks[nextLine]
+			if pos > max {
+				pos = max
+			}
+			if endCond(src[pos:max]) {
+				if pos != max {
+					nextLine++
+				}
+				break
+			}
+			nextLine++
+		}
 	}
 
 	s.Line = nextLine
 	s.PushToken(&HTMLBlock{
-		Content: s.Lines(startLine, nextLine, 0, true),
-		Map:     [2]int{startLine, s.Line},
+		Content: s.Lines(startLine, nextLine, s.BlkIndent, true),
+		Map:     [2]int{startLine, nextLine},
 	})
 
 	return true
