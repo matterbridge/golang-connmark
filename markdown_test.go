@@ -44,7 +44,7 @@ func render(src string, options ...option) (_ string, err error) {
 }
 
 func TestCommonMark(t *testing.T) {
-	examples := loadExamplesFromJSON("spec/commonmark-0.20.json")
+	examples := loadExamplesFromJSON("spec/commonmark-0.21.json")
 	for _, ex := range examples {
 		result, err := render(ex.Markdown, HTML(true), XHTMLOutput(true), Linkify(false), Typographer(false), LangPrefix("language-"))
 		if err != nil {
@@ -58,7 +58,7 @@ func TestCommonMark(t *testing.T) {
 }
 
 func TestRenderSpec(t *testing.T) {
-	data, err := ioutil.ReadFile("spec/spec-0.20.txt")
+	data, err := ioutil.ReadFile("spec/spec-0.21.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
