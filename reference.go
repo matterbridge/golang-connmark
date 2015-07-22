@@ -127,6 +127,17 @@ outer:
 	}
 
 	if pos < max && str[pos] != '\n' {
+		if title != "" {
+			title = ""
+			pos = savedPos
+			lines = savedLineNo
+			for pos < max && src[pos] == ' ' {
+				pos++
+			}
+		}
+	}
+
+	if pos < max && str[pos] != '\n' {
 		return
 	}
 
