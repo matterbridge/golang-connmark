@@ -1,15 +1,15 @@
-markdown [![GoDoc](http://godoc.org/github.com/opennota/markdown?status.svg)](http://godoc.org/github.com/opennota/markdown) [![License](http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
+markdown [![GoDoc](http://godoc.org/github.com/golang-commonmark/markdown?status.svg)](http://godoc.org/github.com/golang-commonmark/markdown) [![License](https://img.shields.io/badge/licence-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
 ========
 
-opennota/markdown package provides CommonMark-compliant markdown parser and renderer, written in Go.
+golang-commonmark/markdown package provides CommonMark-compliant markdown parser and renderer, written in Go.
 
 ## Installation
 
-    go get github.com/opennota/markdown
+    go get github.com/golang-commonmark/markdown
 
-You can also go get [mdtool](https://github.com/opennota/mdtool), an example command-line tool:
+You can also go get [mdtool](https://github.com/golang-commonmark/mdtool), an example command-line tool:
 
-    go get github.com/opennota/mdtool
+    go get github.com/golang-commonmark/mdtool
 
 ## Standards support
 
@@ -17,7 +17,7 @@ Currently supported CommonMark spec: [v0.20](http://spec.commonmark.org/0.20/).
 
 ## Extensions
 
-Besides the features required by CommonMark, opennota/markdown supports:
+Besides the features required by CommonMark, golang-commonmark/markdown supports:
 
   * Tables (GFM)
   * Strikethrough (GFM)
@@ -31,7 +31,7 @@ md := markdown.New(markdown.XHTMLOutput(true), markdown.Nofollow(true))
 fmt.Println(md.RenderToString([]byte("Header\n===\nText")))
 ```
 
-Check out [the source of mdtool](https://github.com/opennota/mdtool/blob/master/main.go) for a more complete example.
+Check out [the source of mdtool](https://github.com/golang-commonmark/mdtool/blob/master/main.go) for a more complete example.
 
 The following options are currently supported:
 
@@ -63,7 +63,7 @@ Rendering spec/spec-0.20.txt on a Intel(R) Core(TM) i5-2400 CPU @ 3.10GHz
 
 ## References / Thanks
 
-[opennota/markdown](https://github.com/opennota/markdown) is a partial port of an awesome JavaScript markdown parser [markdown-it](https://github.com/markdown-it/markdown-it), written by Alex Kocharin and Vitaly Puzrin.
+[golang-commonmark/markdown](https://github.com/golang-commonmark/markdown) is a partial port of an awesome JavaScript markdown parser [markdown-it](https://github.com/markdown-it/markdown-it), written by Alex Kocharin and Vitaly Puzrin.
 
 ## See also
 
