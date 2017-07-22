@@ -26,7 +26,7 @@ func Typographer(b bool) option {
 
 func Quotes(s string) option {
 	return func(m *Markdown) {
-		for i, r := range s {
+		for i, r := range []rune(s) {
 			m.Quotes[i] = r
 		}
 	}
