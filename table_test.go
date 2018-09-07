@@ -13,7 +13,7 @@ func TestEscapedSplit(t *testing.T) {
 	testCases := []testCase{
 		{"", []string{""}},
 		{" a | b | c ", []string{" a ", " b ", " c "}},
-		{"| a | b | c |", []string{" a ", " b ", " c "}},
+		{"| a | b | c |", []string{"", " a ", " b ", " c ", ""}},
 		{` a \| b | c `, []string{` a \| b `, " c "}},
 		{` a \| b \| c `, []string{` a \| b \| c `}},
 		{" `a \\| b` | c ", []string{" `a \\| b` ", " c "}},

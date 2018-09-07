@@ -25,12 +25,12 @@ type RenderOptions struct {
 }
 
 type options struct {
-	HTML        bool    // allow raw HTML in the markup
-	Tables      bool    // GFM tables
-	Linkify     bool    // autoconvert URL-like text to links
-	Typographer bool    // enable some typographic replacements
-	Quotes      [4]rune // double/single quotes replacement pairs
-	MaxNesting  int     // maximum nesting level
+	HTML        bool      // allow raw HTML in the markup
+	Tables      bool      // GFM tables
+	Linkify     bool      // autoconvert URL-like text to links
+	Typographer bool      // enable some typographic replacements
+	Quotes      [4]string // double/single quotes replacement pairs
+	MaxNesting  int       // maximum nesting level
 }
 
 type Environment struct {
@@ -47,7 +47,7 @@ func New(opts ...option) *Markdown {
 			Tables:      true,
 			Linkify:     true,
 			Typographer: true,
-			Quotes:      [4]rune{'“', '”', '‘', '’'},
+			Quotes:      [4]string{"“", "”", "‘", "’"},
 			MaxNesting:  20,
 		},
 		renderOptions: RenderOptions{LangPrefix: "language-"},

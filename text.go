@@ -4,24 +4,22 @@
 
 package markdown
 
-var term [256]bool
+import "strings"
 
-func init() {
-	for _, b := range "\n!#$%&*+-:<=>@[\\]^_`{}~" {
-		term[b] = true
-	}
+func isTerminatorChar(ch byte) bool {
+	return strings.IndexByte("\n!#$%&*+-:<=>@[\\]^_`{}~", ch) != -1
 }
 
-func ruleText(s *StateInline, silent bool) (_ bool) {
+func ruleText(s *StateInline, silent bool) bool {
 	pos := s.Pos
 	max := s.PosMax
 	src := s.Src
 
-	for pos < max && !term[src[pos]] {
+	for pos < max && !isTerminatorChar(src[pos]) {
 		pos++
 	}
 	if pos == s.Pos {
-		return
+		return false
 	}
 
 	if !silent {

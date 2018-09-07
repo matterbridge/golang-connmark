@@ -1,3 +1,7 @@
+// Copyright 2015 The Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package markdown
 
 import (
@@ -9,7 +13,7 @@ import (
 
 func BenchmarkRenderSpecNoHTML(b *testing.B) {
 	b.StopTimer()
-	data, err := ioutil.ReadFile("spec/spec-0.20.txt")
+	data, err := ioutil.ReadFile("spec/spec-0.28.txt")
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -24,7 +28,7 @@ func BenchmarkRenderSpecNoHTML(b *testing.B) {
 
 func BenchmarkRenderSpec(b *testing.B) {
 	b.StopTimer()
-	data, err := ioutil.ReadFile("spec/spec-0.20.txt")
+	data, err := ioutil.ReadFile("spec/spec-0.28.txt")
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -39,7 +43,7 @@ func BenchmarkRenderSpec(b *testing.B) {
 
 func BenchmarkRenderSpecBlackFriday(b *testing.B) {
 	b.StopTimer()
-	data, err := ioutil.ReadFile("spec/spec-0.20.txt")
+	data, err := ioutil.ReadFile("spec/spec-0.28.txt")
 	if err != nil {
 		panic(err)
 	}
