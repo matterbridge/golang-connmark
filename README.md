@@ -1,4 +1,4 @@
-markdown [![GoDoc](http://godoc.org/github.com/golang-commonmark/markdown?status.svg)](http://godoc.org/github.com/golang-commonmark/markdown) [![License](https://img.shields.io/badge/licence-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause) [![Build Status](https://travis-ci.org/golang-commonmark/markdown.png?branch=master)](https://travis-ci.org/golang-commonmark/markdown)]
+markdown [![GoDoc](http://godoc.org/github.com/golang-commonmark/markdown?status.svg)](http://godoc.org/github.com/golang-commonmark/markdown) [![License](https://img.shields.io/badge/licence-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause) [![Build Status](https://travis-ci.org/golang-commonmark/markdown.png?branch=master)](https://travis-ci.org/golang-commonmark/markdown)
 ========
 
 golang-commonmark/markdown package provides CommonMark-compliant markdown parser and renderer, written in Go.
