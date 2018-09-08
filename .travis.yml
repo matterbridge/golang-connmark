@@ -10,6 +10,7 @@ install:
   - go get github.com/golang-commonmark/linkify
   - go get github.com/golang-commonmark/mdurl
   - go get github.com/golang-commonmark/puny
+  - go get github.com/opennota/wd
   - go get github.com/russross/blackfriday
   - go build ./...
 
