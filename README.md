@@ -45,7 +45,6 @@ The following options are currently supported:
   MaxNesting      | int       | maximum nesting level                                       | 20
   LangPrefix      | string    | CSS language prefix for fenced blocks                       | language-
   Breaks          | bool      | whether to convert newlines inside paragraphs into `<br>`   | false
-  Nofollow        | bool      | whether to add `rel="nofollow"` to links                    | false
   XHTMLOutput     | bool      | whether to output XHTML instead of HTML                     | false
 
 ## Benchmarks
