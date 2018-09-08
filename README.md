@@ -41,8 +41,7 @@ The following options are currently supported:
   Tables          | bool      | whether to enable GFM tables                                | true
   Linkify         | bool      | whether to autoconvert plain-text URLs to links             | true
   Typographer     | bool      | whether to enable typographic replacements                  | true
-  Quotes          | string or | double + single quote replacement pairs for the typographer | “”‘’
-                  | []string  |                                                             |
+  Quotes          | string / []string | double + single quote replacement pairs for the typographer | “”‘’
   MaxNesting      | int       | maximum nesting level                                       | 20
   LangPrefix      | string    | CSS language prefix for fenced blocks                       | language-
   Breaks          | bool      | whether to convert newlines inside paragraphs into `<br>`   | false
