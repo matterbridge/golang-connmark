@@ -32,7 +32,7 @@ func (i ParserInline) Parse(src string, md *Markdown, env *Environment) []Token 
 	s.Md = md
 	s.Env = env
 	s.PosMax = len(src)
-	s.Tokens = s.TokArr[:0]
+	s.Tokens = s.bootstrap[:0]
 
 	i.Tokenize(&s)
 
