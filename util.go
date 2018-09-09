@@ -10,9 +10,9 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/golang-commonmark/html"
-	"github.com/golang-commonmark/mdurl"
-	"github.com/golang-commonmark/puny"
+	"gitlab.com/golang-commonmark/html"
+	"gitlab.com/golang-commonmark/mdurl"
+	"gitlab.com/golang-commonmark/puny"
 )
 
 func runeIsSpace(r rune) bool {

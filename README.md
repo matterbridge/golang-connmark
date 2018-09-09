@@ -1,15 +1,15 @@
-markdown [![GoDoc](http://godoc.org/github.com/golang-commonmark/markdown?status.svg)](http://godoc.org/github.com/golang-commonmark/markdown) [![License](https://img.shields.io/badge/licence-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause) [![Build Status](https://travis-ci.org/golang-commonmark/markdown.png?branch=master)](https://travis-ci.org/golang-commonmark/markdown)
+markdown [![GoDoc](http://godoc.org/gitlab.com/golang-commonmark/markdown?status.svg)](http://godoc.org/gitlab.com/golang-commonmark/markdown) [![License](https://img.shields.io/badge/licence-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause) [![Build Status](https://travis-ci.org/golang-commonmark/markdown.png?branch=master)](https://travis-ci.org/golang-commonmark/markdown)
 ========
 
 golang-commonmark/markdown package provides CommonMark-compliant markdown parser and renderer, written in Go.
 
 ## Installation
 
-    go get -u github.com/golang-commonmark/markdown
+    go get -u gitlab.com/golang-commonmark/markdown
 
-You can also go get [mdtool](https://github.com/golang-commonmark/mdtool), an example command-line tool:
+You can also go get [mdtool](https://gitlab.com/golang-commonmark/mdtool), an example command-line tool:
 
-    go get -u github.com/golang-commonmark/mdtool
+    go get -u gitlab.com/golang-commonmark/mdtool
 
 ## Standards support
 
@@ -31,7 +31,7 @@ md := markdown.New(markdown.XHTMLOutput(true))
 fmt.Println(md.RenderToString([]byte("Header\n===\nText")))
 ```
 
-Check out [the source of mdtool](https://github.com/golang-commonmark/mdtool/blob/master/main.go) for a more complete example.
+Check out [the source of mdtool](https://gitlab.com/golang-commonmark/mdtool/blob/master/main.go) for a more complete example.
 
 The following options are currently supported:
 

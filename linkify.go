@@ -7,7 +7,7 @@ package markdown
 import (
 	"strings"
 
-	"github.com/golang-commonmark/linkify"
+	"gitlab.com/golang-commonmark/linkify"
 )
 
 func isLinkOpen(s string) bool { return isLetter(s[1]) }

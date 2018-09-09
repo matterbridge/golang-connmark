@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/golang-commonmark/html"
+	"gitlab.com/golang-commonmark/html"
 )
 
 type Renderer struct {
