@@ -10,14 +10,6 @@ import (
 	"unicode/utf8"
 )
 
-type stackItem struct {
-	token  int
-	text   []rune
-	pos    int
-	single bool
-	level  int
-}
-
 func nextQuoteIndex(s []rune, from int) int {
 	for i := from; i < len(s); i++ {
 		r := s[i]
@@ -36,6 +28,13 @@ func firstRune(s string) rune {
 }
 
 func replaceQuotes(tokens []Token, s *StateCore) {
+	type stackItem struct {
+		token  int
+		text   []rune
+		pos    int
+		single bool
+		level  int
+	}
 	var stack []stackItem
 	var changed map[int][]rune
 
