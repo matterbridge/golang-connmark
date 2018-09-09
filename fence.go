@@ -60,7 +60,7 @@ func ruleFence(s *StateBlock, startLine, endLine int, silent bool) bool {
 			break
 		}
 
-		if src[pos] != marker {
+		if pos >= max || src[pos] != marker {
 			continue
 		}
 
