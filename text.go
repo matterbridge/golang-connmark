@@ -4,10 +4,30 @@
 
 package markdown
 
-import "strings"
-
-func isTerminatorChar(ch byte) bool {
-	return strings.IndexByte("\n!#$%&*+-:<=>@[\\]^_`{}~", ch) != -1
+var terminatorCharTable = [256]bool{
+	'\n': true,
+	'!':  true,
+	'#':  true,
+	'$':  true,
+	'%':  true,
+	'&':  true,
+	'*':  true,
+	'+':  true,
+	'-':  true,
+	':':  true,
+	'<':  true,
+	'=':  true,
+	'>':  true,
+	'@':  true,
+	'[':  true,
+	'\\': true,
+	']':  true,
+	'^':  true,
+	'_':  true,
+	'`':  true,
+	'{':  true,
+	'}':  true,
+	'~':  true,
 }
 
 func ruleText(s *StateInline, silent bool) bool {
@@ -15,7 +35,7 @@ func ruleText(s *StateInline, silent bool) bool {
 	max := s.PosMax
 	src := s.Src
 
-	for pos < max && !isTerminatorChar(src[pos]) {
+	for pos < max && !terminatorCharTable[src[pos]] {
 		pos++
 	}
 	if pos == s.Pos {
