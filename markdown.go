@@ -18,9 +18,9 @@ type Markdown struct {
 }
 
 type RenderOptions struct {
+	LangPrefix string // CSS language class prefix for fenced blocks
 	XHTML      bool   // render as XHTML instead of HTML
 	Breaks     bool   // convert \n in paragraphs into <br>
-	LangPrefix string // CSS language class prefix for fenced blocks
 	Nofollow   bool   // add rel="nofollow" to the links
 }
 

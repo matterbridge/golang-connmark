@@ -5,7 +5,6 @@
 package markdown
 
 type Delimiter struct {
-	Marker byte
 	Length int
 	Jump   int
 	Token  int
@@ -13,6 +12,7 @@ type Delimiter struct {
 	End    int
 	Open   bool
 	Close  bool
+	Marker byte
 }
 
 func ruleEmphasis(s *StateInline, silent bool) bool {
