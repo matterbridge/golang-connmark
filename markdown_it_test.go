@@ -569,7 +569,7 @@ func TestMarkdownIt(t *testing.T) {
 		switch i {
 		case 35, // XXX opennota: investigate
 			60: // XXX opennota: fix golang-commonmark/linkify
-			t.Skip()
+			continue
 		}
 
 		md := New(HTML(true), LangPrefix(""))
