@@ -4,10 +4,7 @@
 
 package markdown
 
-import (
-	"fmt"
-	"unicode/utf8"
-)
+import "unicode/utf8"
 
 type ParserInline struct {
 }
@@ -80,9 +77,6 @@ func (ParserInline) SkipToken(s *StateInline) {
 	pos := s.Pos
 	if s.Cache != nil {
 		if newPos, ok := s.Cache[pos]; ok {
-			if newPos < s.Pos {
-				panic(fmt.Sprintf("oops! was %d, got %d", s.Pos, newPos))
-			}
 			s.Pos = newPos
 			return
 		}
@@ -92,13 +86,9 @@ func (ParserInline) SkipToken(s *StateInline) {
 
 	ok := false
 	if s.Level < s.Md.MaxNesting {
-		for i, r := range inlineRules {
+		for _, r := range inlineRules {
 			s.Level++
-			origPos := s.Pos
 			ok = r(s, true)
-			if s.Pos < origPos {
-				panic(fmt.Sprintf("%d:%d:%d", i, origPos, s.Pos))
-			}
 			s.Level--
 			if ok {
 				break
