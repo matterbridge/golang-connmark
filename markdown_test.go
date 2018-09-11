@@ -50,14 +50,17 @@ func render(src string, options ...option) (_ string, err error) {
 func TestCommonMark(t *testing.T) {
 	examples := loadExamplesFromJSON("spec/commonmark-0.28.json")
 	for _, ex := range examples {
-		result, err := render(ex.Markdown, HTML(true), XHTMLOutput(true), Linkify(false), Typographer(false), LangPrefix("language-"))
-		if err != nil {
-			t.Errorf("#%d (%s): PANIC (%v)", ex.Num, ex.Section, err)
-		} else if result != ex.HTML {
-			d := wd.ColouredDiff(ex.HTML, result, false)
-			d = wd.NumberLines(d)
-			t.Errorf("#%d (%s):\n%s", ex.Num, ex.Section, d)
-		}
+		ex := ex
+		t.Run(fmt.Sprintf("test #%d (%s)", ex.Num, ex.Section), func(t *testing.T) {
+			result, err := render(ex.Markdown, HTML(true), XHTMLOutput(true), Linkify(false), Typographer(false), LangPrefix("language-"))
+			if err != nil {
+				t.Errorf("#%d (%s): PANIC (%v)", ex.Num, ex.Section, err)
+			} else if result != ex.HTML {
+				d := wd.ColouredDiff(ex.HTML, result, false)
+				d = wd.NumberLines(d)
+				t.Errorf("#%d (%s):\n%s", ex.Num, ex.Section, d)
+			}
+		})
 	}
 }
 
