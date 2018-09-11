@@ -4,7 +4,10 @@
 
 package markdown
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 var mditTests = []struct {
 	markdown string
@@ -572,10 +575,14 @@ func TestMarkdownIt(t *testing.T) {
 			continue
 		}
 
-		md := New(HTML(true), LangPrefix(""))
-		got := md.RenderToString([]byte(test.markdown))
-		if got != test.want {
-			t.Errorf("#%d: markdown(%q)\nwant %q\n got %q", i, test.markdown, test.want, got)
-		}
+		test := test
+		t.Run(fmt.Sprintf("test #%d", i), func(t *testing.T) {
+			t.Parallel()
+			md := New(HTML(true), LangPrefix(""))
+			got := md.RenderToString([]byte(test.markdown))
+			if got != test.want {
+				t.Errorf("#%d: markdown(%q)\nwant %q\n got %q", i, test.markdown, test.want, got)
+			}
+		})
 	}
 }
