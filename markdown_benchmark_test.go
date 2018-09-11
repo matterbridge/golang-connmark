@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/russross/blackfriday"
+	blackfriday2 "gopkg.in/russross/blackfriday.v2"
 )
 
 func BenchmarkRenderSpecNoHTML(b *testing.B) {
@@ -58,6 +59,35 @@ func BenchmarkRenderSpecBlackFriday(b *testing.B) {
 				blackfriday.EXTENSION_FENCED_CODE|
 				blackfriday.EXTENSION_AUTOLINK|
 				blackfriday.EXTENSION_STRIKETHROUGH,
+		)
+	}
+}
+
+func BenchmarkRenderSpecBlackFriday2(b *testing.B) {
+	b.StopTimer()
+	data, err := ioutil.ReadFile("spec/spec-0.28.txt")
+	if err != nil {
+		panic(err)
+	}
+
+	renderer := blackfriday2.NewHTMLRenderer(
+		blackfriday2.HTMLRendererParameters{
+			Flags: blackfriday2.Smartypants |
+				blackfriday2.SmartypantsDashes |
+				blackfriday2.SmartypantsLatexDashes |
+				blackfriday2.SmartypantsAngledQuotes,
+		},
+	)
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		blackfriday2.Run(data, blackfriday2.WithExtensions(
+			blackfriday2.NoIntraEmphasis|
+				blackfriday2.Tables|
+				blackfriday2.FencedCode|
+				blackfriday2.Autolink|
+				blackfriday2.Strikethrough),
+			blackfriday2.WithRenderer(renderer),
 		)
 	}
 }
