@@ -5,12 +5,12 @@ stages:
   - test
 
 before_script:
+  - go get github.com/russross/blackfriday
   - go get gitlab.com/golang-commonmark/html
   - go get gitlab.com/golang-commonmark/linkify
   - go get gitlab.com/golang-commonmark/mdurl
   - go get gitlab.com/golang-commonmark/puny
   - go get gitlab.com/opennota/wd
-  - go get gitlab.com/russross/blackfriday
   - go get golang.org/x/net/html/charset
 
 build:
