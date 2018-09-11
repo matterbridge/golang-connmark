@@ -1,20 +1,25 @@
-language: go
-sudo: false
+image: golang:1.11
 
-go:
-  - 1.x
-  - master
+stages:
+  - build
+  - test
 
-install:
+before_script:
   - go get gitlab.com/golang-commonmark/html
   - go get gitlab.com/golang-commonmark/linkify
   - go get gitlab.com/golang-commonmark/mdurl
   - go get gitlab.com/golang-commonmark/puny
   - go get gitlab.com/opennota/wd
   - go get gitlab.com/russross/blackfriday
-  - go build ./...
+  - go get golang.org/x/net/html/charset
 
-script:
-  - test -z "$(gofmt -l . | tee /dev/stderr)"
-  - go test -v ./...
+build:
+  stage: build
+  script:
+    - go build ./...
 
+test:
+  stage: test
+  script:
+    - test -z "$(gofmt -l . | tee /dev/stderr)"
+    - go test ./...
