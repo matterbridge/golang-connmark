@@ -11,7 +11,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/opennota/wd"
+	"gitlab.com/opennota/wd"
 )
 
 type example struct {
