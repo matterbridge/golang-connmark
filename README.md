@@ -1,7 +1,7 @@
 markdown [![GoDoc](http://godoc.org/gitlab.com/golang-commonmark/markdown?status.svg)](http://godoc.org/gitlab.com/golang-commonmark/markdown) [![License](https://img.shields.io/badge/licence-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause) [![Pipeline status](https://gitlab.com/golang-commonmark/markdown/badges/master/pipeline.svg)](https://gitlab.com/golang-commonmark/markdown/commits/master) [![Coverage report](https://gitlab.com/golang-commonmark/markdown/badges/master/coverage.svg)](https://gitlab.com/golang-commonmark/markdown/commits/master)
 ========
 
-golang-commonmark/markdown package provides a CommonMark-compliant markdown parser and renderer, written in Go.
+Package golang-commonmark/markdown provides a CommonMark-compliant markdown parser and renderer, written in Go.
 
 ## Installation
 
