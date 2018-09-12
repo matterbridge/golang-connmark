@@ -150,9 +150,7 @@ func replaceQuotes(tokens []Token, s *StateCore) {
 					if changed == nil {
 						changed = make(map[int][]rune)
 					}
-					if _, ok := changed[i]; !ok {
-						changed[i] = text
-					}
+					changed[i] = text
 				}
 				continue
 			}
@@ -207,14 +205,11 @@ func replaceQuotes(tokens []Token, s *StateCore) {
 
 						max = len(text)
 
-						if _, ok := changed[i]; !ok {
-							changed[i] = text
+						if changed == nil {
+							changed = make(map[int][]rune)
 						}
-						if ii := item.token; ii != i {
-							if _, ok := changed[ii]; !ok {
-								changed[ii] = item.text
-							}
-						}
+						changed[i] = text
+						changed[item.token] = item.text
 						stack = stack[:j]
 						continue loop
 					}
@@ -234,9 +229,7 @@ func replaceQuotes(tokens []Token, s *StateCore) {
 				if changed == nil {
 					changed = make(map[int][]rune)
 				}
-				if _, ok := changed[i]; !ok {
-					changed[i] = text
-				}
+				changed[i] = text
 			}
 		}
 	}

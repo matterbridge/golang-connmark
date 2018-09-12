@@ -75,10 +75,9 @@ func TestRenderSpec(t *testing.T) {
 }
 
 func TestFrenchQuoteMarks(t *testing.T) {
-	t.SkipNow()
-	md := New(Quotes([]string{"« ", " »", "‹ ", " ›"}))
+	md := New(Quotes([]string{"« ", " »", "‹ ", " ›"}))
 	got := md.RenderToString([]byte(`"Son 'explication' n'est qu'un mensonge", s'indigna le député.`))
-	want := `« Son ‹ explication › n’est qu’un mensonge », s’indigna le député.`
+	want := "<p>« Son ‹ explication › n’est qu’un mensonge », s’indigna le député.</p>\n"
 	if got != want {
 		t.Errorf("want %q, got %q", want, got)
 	}
