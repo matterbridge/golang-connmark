@@ -233,11 +233,12 @@ outer:
 		startLine = s.Line
 		nextLine = startLine
 		(*itemMap)[1] = nextLine
-		contentStart = s.BMarks[startLine]
 
 		if nextLine >= endLine {
 			break
 		}
+
+		contentStart = s.BMarks[startLine]
 
 		if s.SCount[nextLine] < s.BlkIndent {
 			break
