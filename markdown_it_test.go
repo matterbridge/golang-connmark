@@ -570,8 +570,7 @@ var mditTests = []struct {
 func TestMarkdownIt(t *testing.T) {
 	for i, test := range mditTests {
 		switch i {
-		case 35, // XXX opennota: investigate
-			60: // XXX opennota: fix golang-commonmark/linkify
+		case 35: // XXX opennota: investigate
 			continue
 		}
 
