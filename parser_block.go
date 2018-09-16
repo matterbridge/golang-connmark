@@ -4,10 +4,7 @@
 
 package markdown
 
-import (
-	"bytes"
-	"unicode/utf8"
-)
+import "bytes"
 
 type ParserBlock struct{}
 
@@ -50,7 +47,6 @@ func (b ParserBlock) Parse(src []byte, md *Markdown, env *Environment) []Token {
 
 	indentFound := false
 	start := 0
-	pos := 0
 	indent := 0
 	offset := 0
 
@@ -61,9 +57,7 @@ func (b ParserBlock) Parse(src []byte, md *Markdown, env *Environment) []Token {
 	sCount := mem[n*3 : n*3 : n*4]
 	bsCount := mem[n*4 : n*4 : n*5]
 
-	for pos < len(src) {
-		r, size := utf8.DecodeRune(src[pos:])
-
+	for pos, r := range string(src) {
 		if !indentFound {
 			if runeIsSpace(r) {
 				indent++
@@ -72,7 +66,6 @@ func (b ParserBlock) Parse(src []byte, md *Markdown, env *Environment) []Token {
 				} else {
 					offset++
 				}
-				pos += size
 				continue
 			}
 			indentFound = true
@@ -93,8 +86,6 @@ func (b ParserBlock) Parse(src []byte, md *Markdown, env *Environment) []Token {
 			offset = 0
 			start = pos + 1
 		}
-
-		pos += size
 	}
 
 	bMarks = append(bMarks, len(src))
