@@ -4,10 +4,7 @@
 
 package markdown
 
-import (
-	"bytes"
-	"unicode/utf8"
-)
+import "unicode/utf8"
 
 type ParserBlock struct{}
 
@@ -15,20 +12,35 @@ type BlockRule func(*StateBlock, int, int, bool) bool
 
 var blockRules []BlockRule
 
-var nl = []byte{'\n'}
-
 func (b ParserBlock) Parse(src []byte, md *Markdown, env *Environment) []Token {
+	n := 1
+	buf := make([]byte, 0, len(src))
+	for i := 0; i < len(src); i++ {
+		switch ch := src[i]; ch {
+		case '\n':
+			n++
+			buf = append(buf, '\n')
+		case '\r':
+			buf = append(buf, '\n')
+			n++
+			if i < len(src) && src[i+1] == '\n' {
+				i++
+			}
+		default:
+			buf = append(buf, ch)
+		}
+	}
+	if len(buf) == 0 || buf[len(buf)-1] != '\n' {
+		n++
+	}
+	src = buf
+
 	indentFound := false
 	start := 0
 	pos := 0
 	indent := 0
 	offset := 0
 
-	n := bytes.Count(src, nl)
-	if l := len(src); l == 0 || src[l-1] != '\n' {
-		n++
-	}
-	n++
 	mem := make([]int, 0, n*5)
 	bMarks := mem[0:0:n]
 	eMarks := mem[n : n : n*2]
