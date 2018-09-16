@@ -31,7 +31,7 @@ func normalizeNewlines(src []byte) ([]byte, int) {
 		case '\r':
 			buf = append(buf, '\n')
 			n++
-			if i < len(src) && src[i+1] == '\n' {
+			if i < len(src)-1 && src[i+1] == '\n' {
 				i++
 			}
 		default:
