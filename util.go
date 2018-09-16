@@ -256,7 +256,7 @@ func normalizeReference(s string) string {
 			continue
 		}
 
-		buf.WriteRune(unicode.To(unicode.LowerCase, r))
+		buf.WriteRune(unicode.ToLower(r))
 		lastSpace = false
 	}
 
