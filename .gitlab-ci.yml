@@ -11,7 +11,6 @@ before_script:
   - go get gitlab.com/golang-commonmark/mdurl
   - go get gitlab.com/golang-commonmark/puny
   - go get gitlab.com/opennota/wd
-  - go get golang.org/x/net/html/charset
   - go get gopkg.in/russross/blackfriday.v2
 
 build:
