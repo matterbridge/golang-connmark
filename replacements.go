@@ -4,10 +4,7 @@
 
 package markdown
 
-import (
-	"bytes"
-	"strings"
-)
+import "bytes"
 
 func exclquest(b byte) bool {
 	return b == '!' || b == '?'
@@ -20,13 +17,23 @@ func byteToLower(b byte) byte {
 	return b
 }
 
+var replChar = [256]bool{
+	'(': true,
+	'!': true,
+	'+': true,
+	',': true,
+	'-': true,
+	'.': true,
+	'?': true,
+}
+
 func performReplacements(s string) string {
 	var buf bytes.Buffer
 
 	for i := 0; i < len(s); i++ {
 		b := s[i]
 
-		if strings.IndexByte("(!+,-.?", b) != -1 {
+		if replChar[b] {
 
 		outer:
 			switch b {
