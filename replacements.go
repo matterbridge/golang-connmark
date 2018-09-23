@@ -4,7 +4,7 @@
 
 package markdown
 
-import "bytes"
+import "strings"
 
 func exclquest(b byte) bool {
 	return b == '!' || b == '?'
@@ -28,8 +28,9 @@ var replChar = [256]bool{
 }
 
 func performReplacements(s string) string {
-	var buf bytes.Buffer
+	var ss []string
 
+	start := 0
 	for i := 0; i < len(s); i++ {
 		b := s[i]
 
@@ -52,13 +53,23 @@ func performReplacements(s string) string {
 					}
 					switch b2 {
 					case 'c':
-						buf.WriteString("©")
+						if start < i {
+							ss = append(ss, s[start:i])
+						}
+						ss = append(ss, "©")
 					case 'r':
-						buf.WriteString("®")
+						if start < i {
+							ss = append(ss, s[start:i])
+						}
+						ss = append(ss, "®")
 					case 'p':
-						buf.WriteString("§")
+						if start < i {
+							ss = append(ss, s[start:i])
+						}
+						ss = append(ss, "§")
 					}
 					i += 2
+					start = i + 1
 					continue
 
 				case 't':
@@ -68,8 +79,12 @@ func performReplacements(s string) string {
 					if s[i+3] != ')' || byteToLower(s[i+2]) != 'm' {
 						break outer
 					}
-					buf.WriteString("™")
+					if start < i {
+						ss = append(ss, s[start:i])
+					}
+					ss = append(ss, "™")
 					i += 3
+					start = i + 1
 					continue
 				default:
 					break outer
@@ -79,8 +94,12 @@ func performReplacements(s string) string {
 				if i+1 >= len(s) || s[i+1] != '-' {
 					break
 				}
-				buf.WriteString("±")
+				if start < i {
+					ss = append(ss, s[start:i])
+				}
+				ss = append(ss, "±")
 				i++
+				start = i + 1
 				continue
 
 			case '.':
@@ -92,12 +111,16 @@ func performReplacements(s string) string {
 				for j < len(s) && s[j] == '.' {
 					j++
 				}
+				if start < i {
+					ss = append(ss, s[start:i])
+				}
 				if i == 0 || !(s[i-1] == '?' || s[i-1] == '!') {
-					buf.WriteString("…")
+					ss = append(ss, "…")
 				} else {
-					buf.WriteString("..")
+					ss = append(ss, "..")
 				}
 				i = j - 1
+				start = i + 1
 				continue
 
 			case '?', '!':
@@ -107,24 +130,32 @@ func performReplacements(s string) string {
 				if !(exclquest(s[i+1]) && exclquest(s[i+2]) && exclquest(s[i+3])) {
 					break
 				}
-				buf.WriteString(s[i : i+3])
+				if start < i {
+					ss = append(ss, s[start:i])
+				}
+				ss = append(ss, s[i:i+3])
 				j := i + 3
 				for j < len(s) && exclquest(s[j]) {
 					j++
 				}
 				i = j - 1
+				start = i + 1
 				continue
 
 			case ',':
 				if i+1 >= len(s) || s[i+1] != ',' {
 					break
 				}
-				buf.WriteByte(',')
+				if start < i {
+					ss = append(ss, s[start:i])
+				}
+				ss = append(ss, ",")
 				j := i + 2
 				for j < len(s) && s[j] == ',' {
 					j++
 				}
 				i = j - 1
+				start = i + 1
 				continue
 
 			case '-':
@@ -132,13 +163,21 @@ func performReplacements(s string) string {
 					break
 				}
 				if i+2 >= len(s) || s[i+2] != '-' {
-					buf.WriteString("–")
+					if start < i {
+						ss = append(ss, s[start:i])
+					}
+					ss = append(ss, "–")
 					i++
+					start = i + 1
 					continue
 				}
 				if i+3 >= len(s) || s[i+3] != '-' {
-					buf.WriteString("—")
+					if start < i {
+						ss = append(ss, s[start:i])
+					}
+					ss = append(ss, "—")
 					i += 2
+					start = i + 1
 					continue
 				}
 
@@ -146,15 +185,23 @@ func performReplacements(s string) string {
 				for j < len(s) && s[j] == '-' {
 					j++
 				}
-				buf.WriteString(s[i:j])
+				if start < i {
+					ss = append(ss, s[start:i])
+				}
+				ss = append(ss, s[i:j])
 				i = j - 1
+				start = i + 1
 				continue
 			}
 		}
-
-		buf.WriteByte(b)
 	}
-	return buf.String()
+	if ss == nil {
+		return s
+	}
+	if start < len(s) {
+		ss = append(ss, s[start:])
+	}
+	return strings.Join(ss, "")
 }
 
 func ruleReplacements(s *StateCore) {
