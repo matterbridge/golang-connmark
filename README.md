@@ -51,10 +51,10 @@ The following options are currently supported:
 
 Rendering spec/spec-0.28.txt on a Intel(R) Core(TM) i5-2400 CPU @ 3.10GHz
 
-    BenchmarkRenderSpecNoHTML         100    11862311 ns/op    3448101 B/op    23664 allocs/op
-    BenchmarkRenderSpec               100    12234065 ns/op    3447535 B/op    23657 allocs/op
-    BenchmarkRenderSpecBlackFriday    200     7384989 ns/op    2834431 B/op    17102 allocs/op
-    BenchmarkRenderSpecBlackFriday2   200     7160790 ns/op    2991180 B/op    16705 allocs/op
+    BenchmarkRenderSpecNoHTML         100    10254720 ns/op    2998037 B/op    18225 allocs/op
+    BenchmarkRenderSpec               100    10180241 ns/op    2997307 B/op    18214 allocs/op
+    BenchmarkRenderSpecBlackFriday    200     7241749 ns/op    2834340 B/op    17101 allocs/op
+    BenchmarkRenderSpecBlackFriday2   200     7448256 ns/op    2991202 B/op    16705 allocs/op
 
 ## See also
 
