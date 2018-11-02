@@ -60,6 +60,8 @@ func (b ParserBlock) Parse(src []byte, md *Markdown, env *Environment) []Token {
 	sCount := mem[n*3 : n*3 : n*4]
 	bsCount := mem[n*4 : n*4 : n*5]
 
+	_, lastRuneLen := utf8.DecodeLastRune(src)
+	lastRunePos := len(src) - lastRuneLen
 	for pos, r := range string(src) {
 		if !indentFound {
 			if runeIsSpace(r) {
@@ -74,9 +76,9 @@ func (b ParserBlock) Parse(src []byte, md *Markdown, env *Environment) []Token {
 			indentFound = true
 		}
 
-		if r == '\n' || pos == len(src)-utf8.RuneLen(r) {
+		if r == '\n' || pos == lastRunePos {
 			if r != '\n' {
-				pos += utf8.RuneLen(r)
+				pos = len(src)
 			}
 			bMarks = append(bMarks, start)
 			eMarks = append(eMarks, pos)
