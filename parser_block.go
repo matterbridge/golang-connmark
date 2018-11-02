@@ -4,7 +4,10 @@
 
 package markdown
 
-import "bytes"
+import (
+	"bytes"
+	"unicode/utf8"
+)
 
 type ParserBlock struct{}
 
@@ -71,9 +74,9 @@ func (b ParserBlock) Parse(src []byte, md *Markdown, env *Environment) []Token {
 			indentFound = true
 		}
 
-		if r == '\n' || pos == len(src)-1 {
+		if r == '\n' || pos == len(src)-utf8.RuneLen(r) {
 			if r != '\n' {
-				pos++
+				pos += utf8.RuneLen(r)
 			}
 			bMarks = append(bMarks, start)
 			eMarks = append(eMarks, pos)

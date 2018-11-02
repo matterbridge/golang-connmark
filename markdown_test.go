@@ -82,3 +82,12 @@ func TestFrenchQuoteMarks(t *testing.T) {
 		t.Errorf("want %q, got %q", want, got)
 	}
 }
+
+func TestMultibyteCharAtTheEnd(t *testing.T) {
+	md := New()
+	got := md.RenderToString([]byte("“Test”\nTest\n“Test”"))
+	want := "<p>“Test”\nTest\n“Test”</p>\n"
+	if got != want {
+		t.Errorf("want %q, got %q", want, got)
+	}
+}
